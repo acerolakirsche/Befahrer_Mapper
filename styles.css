@@ -1,0 +1,88 @@
+/*
+      styles.css
+      ==========
+      Diese Datei enthält alle Stile für die Webseite, einschließlich:
+      - Layout der Karte und der KML-Liste.
+      - Stile für die KML-Einträge, Checkboxen und den Löschbutton.
+      - Stile für den "Zu ausgewählten KMLs zoomen"-Button.
+      - Stile für die Farbkästchen.
+      - Stile für die "Alle auswählen"-Checkbox.
+      - Verbesserte Stile für die KML-Bezeichnungen (zweizeilig, serifenlos, kleinere Schrift).
+      - Stile für die große Zahl (größere Schrift, mehr Abstand zum Dateinamen).
+    */
+    body { margin: 0; }
+    #map { height: 100vh; }
+    #kml-list {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: white;
+      padding: 10px;
+      z-index: 1000;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .kml-item {
+      margin: 5px 0;
+      padding: 5px;
+      border-bottom: 1px solid #ddd;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .kml-item:hover {
+      background: #f0f0f0;
+    }
+    .delete-icon {
+      color: #ff4444;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+    .delete-icon:hover {
+      color: #cc0000;
+    }
+    #zoom-to-selected {
+      margin-top: 10px;
+      padding: 5px 10px;
+      background: #0078d4;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    #zoom-to-selected:hover {
+      background: #005bb5;
+    }
+    #color-picker {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 10px;
+    }
+    .color-box {
+      width: 20px;
+      height: 20px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+    }
+    .color-box:hover {
+      border-color: #000;
+    }
+    #select-all-container {
+      margin-bottom: 10px;
+    }
+    .kml-item span {
+      font-family: Arial, sans-serif; /* Serifenlose Schriftart */
+      font-size: 0.8em; /* Kleinere Schriftgröße (halbe Größe) */
+      white-space: normal; /* Zeilenumbruch erlauben */
+      word-wrap: break-word; /* Lange Wörter umbrechen */
+      max-width: 150px; /* Maximale Breite für den Text */
+    }
+    .kml-number {
+      font-family: 'Courier New', Courier, monospace; /* Neue Schriftart für die Zahl */
+      font-size: 6.4em; /* Doppelte Schriftgröße (6.4em statt 3.2em) */
+      margin-right: 20px; /* Mehr Abstand zur Checkbox */
+      margin-left: 10px; /* Mehr Abstand zum Dateinamen */
+      font-weight: bold; /* Fettgedruckte Schrift */
+      color: #0078d4; /* Neue Farbe für die Zahl */
+    }

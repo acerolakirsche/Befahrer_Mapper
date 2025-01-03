@@ -1,0 +1,46 @@
+<!--
+      index.html
+      ==========
+      Diese Datei ist das Haupt-HTML-Dokument der Anwendung. Sie enthält:
+      - Die Struktur der Webseite (Karte und KML-Liste).
+      - Die Einbindung von externen Bibliotheken (Leaflet, Font Awesome).
+      - Die Einbindung der lokalen CSS- und JavaScript-Dateien.
+    -->
+    <!DOCTYPE html>
+    <html lang="de">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Leaflet Map with Select All Checkbox</title>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+        <link rel="stylesheet" href="styles.css" />
+      </head>
+      <body>
+        <div id="map"></div>
+        <div id="kml-list">
+          <h3>KML-Dateien</h3>
+          <div id="color-picker">
+            <!-- Farbkästchen für die Farbauswahl -->
+            <div class="color-box" style="background-color: #ff0000;" data-color="#ff0000"></div>
+            <div class="color-box" style="background-color: #00ff00;" data-color="#00ff00"></div>
+            <div class="color-box" style="background-color: #0000ff;" data-color="#0000ff"></div>
+            <div class="color-box" style="background-color: #ffff00;" data-color="#ffff00"></div>
+            <div class="color-box" style="background-color: #ff00ff;" data-color="#ff00ff"></div>
+            <div class="color-box" style="background-color: #00ffff;" data-color="#00ffff"></div>
+            <div class="color-box" style="background-color: #ff8000;" data-color="#ff8000"></div>
+            <div class="color-box" style="background-color: #8000ff;" data-color="#8000ff"></div>
+          </div>
+          <div id="select-all-container">
+            <input type="checkbox" id="select-all" />
+            <label for="select-all">Alle auswählen</label>
+          </div>
+          <div id="kml-items"></div>
+          <button id="zoom-to-selected">Zu ausgewählten KMLs zoomen</button>
+        </div>
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <script src="https://unpkg.com/@mapbox/togeojson@0.16.0/togeojson.js"></script>
+        <script src="utils.js"></script>
+        <script src="main.js"></script>
+      </body>
+    </html>
