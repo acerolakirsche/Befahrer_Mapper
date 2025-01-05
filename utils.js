@@ -184,8 +184,8 @@
         };
         kmlItem.appendChild(deleteIcon);
 
-        // Event-Listener für das Klicken auf den Listeneintrag (außerhalb der Checkbox)
-        kmlItem.addEventListener('click', (e) => {
+        // Event-Listener für das Doppelklicken auf den Listeneintrag (außerhalb der Checkbox)
+        kmlItem.addEventListener('dblclick', (e) => {
           // Nur zoomen, wenn nicht auf die Checkbox oder das Mülleimer-Symbol geklickt wurde
           if (!e.target.matches('input[type="checkbox"]') && !e.target.matches('.delete-icon')) {
             map.fitBounds(layerInfo.mainLayer.getBounds()); // Zoome zur BoundingBox des Layers

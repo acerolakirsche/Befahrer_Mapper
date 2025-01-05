@@ -49,3 +49,7 @@
         alert('Bitte wähle mindestens eine KML-Datei aus.');
       }
     });
+
+    // Globale Variablen für die KML-Layer und die Liste der KML-Einträge
+    const layers = [];
+    const kmlItems = document.getElementById('kml-items');
