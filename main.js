@@ -7,10 +7,8 @@
       - Event-Listener für den "Zu ausgewählten KMLs zoomen"-Button.
       - Verwaltung der KML-Layer und ihrer Einträge in der Liste.
     */
-    // Initialisiere die Karte mit einem Standard-View
-    const map = L.map('map').setView([51.505, -0.09], 13);
-    const kmlItems = document.getElementById('kml-items');
-    const layers = [];
+    // Initialisiere die Karte mit einem Fokus auf Deutschland
+    const map = L.map('map').setView([51.1657, 10.4515], 6);
 
     // Füge die OpenStreetMap-TileLayer hinzu
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
