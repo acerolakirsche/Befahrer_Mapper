@@ -206,7 +206,7 @@
           const contextMenu = document.createElement('div');
           contextMenu.id = 'kml-context-menu';
           contextMenu.style.position = 'absolute';
-          contextMenu.style.left = `${e.pageX}px`; // Positioniere links vom Mauszeiger
+          contextMenu.style.right = `${window.innerWidth - e.pageX}px`; // Positioniere links vom Mauszeiger
           contextMenu.style.top = `${e.pageY}px`;
           contextMenu.style.backgroundColor = 'white';
           contextMenu.style.border = '1px solid #ccc';
@@ -246,31 +246,33 @@
           });
           contextMenu.appendChild(zoomAllItem);
 
-          // Alle auswählen
-          const selectAllItem = document.createElement('div');
-          selectAllItem.textContent = 'Alle auswählen';
-          selectAllItem.style.padding = '5px 10px';
-          selectAllItem.style.cursor = 'pointer';
-          selectAllItem.addEventListener('click', () => {
+          // Alle selektieren/deselektieren (Toggle)
+          const toggleAllItem = document.createElement('div');
+          toggleAllItem.textContent = 'Alle selektieren/deselektieren';
+          toggleAllItem.style.padding = '5px 10px';
+          toggleAllItem.style.cursor = 'pointer';
+          toggleAllItem.addEventListener('click', () => {
+            const allChecked = layers.every(layer => layer.checkbox.checked);
             layers.forEach(layer => {
-              layer.checkbox.checked = true;
+              layer.checkbox.checked = !allChecked;
             });
             contextMenu.remove();
           });
-          contextMenu.appendChild(selectAllItem);
+          contextMenu.appendChild(toggleAllItem);
 
-          // Alle abwählen
-          const deselectAllItem = document.createElement('div');
-          deselectAllItem.textContent = 'Alle abwählen';
-          deselectAllItem.style.padding = '5px 10px';
-          deselectAllItem.style.cursor = 'pointer';
-          deselectAllItem.addEventListener('click', () => {
-            layers.forEach(layer => {
-              layer.checkbox.checked = false;
+          // Zoom-out auf Deutschland
+          const zoomOutItem = document.createElement('div');
+          zoomOutItem.textContent = 'Zoom-out auf Deutschland';
+          zoomOutItem.style.padding = '5px 10px';
+          zoomOutItem.style.cursor = 'pointer';
+          zoomOutItem.addEventListener('click', () => {
+            map.flyTo([51.1657, 10.4515], 6, {
+              duration: 1,
+              easeLinearity: 0.25
             });
             contextMenu.remove();
           });
-          contextMenu.appendChild(deselectAllItem);
+          contextMenu.appendChild(zoomOutItem);
 
           document.body.appendChild(contextMenu);
 
