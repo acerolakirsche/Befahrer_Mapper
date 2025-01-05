@@ -9,13 +9,13 @@
       - Farbauswahl für KML-Linien.
       - Schattenlinien unter den eigentlichen Linien.
       - "Alle auswählen"-Funktion.
-      - Variable Linienstärke für Haupt- und Schattenlinien.
       - Anzeige einer großen Zahl basierend auf dem Dateinamen (13 Zeichen vom Ende entfernt).
       - Verdoppelungsschutz für KML-Dateien mit übersichtlichen, nicht überlappenden Meldungen.
+      - Kontextmenü für Zoom-Funktionen
     */
 
     // Globale Variable für die Linienstärke der Hauptlinie
-    let mainLineWeight = 3; // Linienstärke der Hauptlinie (auf 3 gesetzt)
+    const mainLineWeight = 3; // Linienstärke der Hauptlinie (auf 3 gesetzt)
     const shadowLineWeight = mainLineWeight * 2; // Linienstärke der Schattenlinie (doppelte Stärke)
 
     // Funktion zum Extrahieren der zweistelligen Zahl aus dem Dateinamen
@@ -184,12 +184,72 @@
         };
         kmlItem.appendChild(deleteIcon);
 
-        // Event-Listener für das Doppelklicken auf den Listeneintrag (außerhalb der Checkbox)
-        kmlItem.addEventListener('dblclick', (e) => {
-          // Nur zoomen, wenn nicht auf die Checkbox oder das Mülleimer-Symbol geklickt wurde
+        // Event-Listener für das Klicken auf den Listeneintrag
+        kmlItem.addEventListener('click', (e) => {
+          // Nur umschalten, wenn nicht auf die Checkbox oder das Mülleimer-Symbol geklickt wurde
           if (!e.target.matches('input[type="checkbox"]') && !e.target.matches('.delete-icon')) {
-            map.fitBounds(layerInfo.mainLayer.getBounds()); // Zoome zur BoundingBox des Layers
+            checkbox.checked = !checkbox.checked;
           }
+        });
+
+        // Kontextmenü für Rechtsklick
+        kmlItem.addEventListener('contextmenu', (e) => {
+          e.preventDefault();
+          
+          // Entferne vorhandenes Kontextmenü
+          const existingMenu = document.getElementById('kml-context-menu');
+          if (existingMenu) {
+            existingMenu.remove();
+          }
+
+          // Erstelle neues Kontextmenü
+          const contextMenu = document.createElement('div');
+          contextMenu.id = 'kml-context-menu';
+          contextMenu.style.position = 'absolute';
+          contextMenu.style.left = `${e.pageX}px`;
+          contextMenu.style.top = `${e.pageY}px`;
+          contextMenu.style.backgroundColor = 'white';
+          contextMenu.style.border = '1px solid #ccc';
+          contextMenu.style.boxShadow = '2px 2px 5px rgba(0,0,0,0.2)';
+          contextMenu.style.zIndex = '1000';
+
+          // Zoom auf diese KML
+          const zoomItem = document.createElement('div');
+          zoomItem.textContent = 'Zoom';
+          zoomItem.style.padding = '5px 10px';
+          zoomItem.style.cursor = 'pointer';
+          zoomItem.addEventListener('click', () => {
+            map.fitBounds(layerInfo.mainLayer.getBounds());
+            contextMenu.remove();
+          });
+          contextMenu.appendChild(zoomItem);
+
+          // Zoom auf alle selektierten KMLs
+          const zoomAllItem = document.createElement('div');
+          zoomAllItem.textContent = 'Zoom auf alle selektierten';
+          zoomAllItem.style.padding = '5px 10px';
+          zoomAllItem.style.cursor = 'pointer';
+          zoomAllItem.addEventListener('click', () => {
+            const selectedLayers = layers.filter(l => l.checkbox.checked);
+            if (selectedLayers.length > 0) {
+              const bounds = selectedLayers.map(l => l.mainLayer.getBounds());
+              const combinedBounds = bounds.reduce((acc, curr) => acc.extend(curr), L.latLngBounds(bounds[0]));
+              map.fitBounds(combinedBounds);
+            }
+            contextMenu.remove();
+          });
+          contextMenu.appendChild(zoomAllItem);
+
+          document.body.appendChild(contextMenu);
+
+          // Schließe das Menü bei Klick außerhalb
+          const closeMenu = (e) => {
+            if (!contextMenu.contains(e.target)) {
+              contextMenu.remove();
+              document.removeEventListener('click', closeMenu);
+            }
+          };
+          document.addEventListener('click', closeMenu);
         });
 
         // Füge den Listeneintrag zur Liste hinzu
@@ -239,40 +299,4 @@
           layerInfo.checkbox.checked = isChecked;
         });
       });
-    });
-
-    // Funktion zum Ändern der Linienstärke
-    function changeLineWeight(newWeight) {
-      mainLineWeight = newWeight;
-      layers.forEach(layerInfo => {
-        layerInfo.mainLayer.setStyle({ weight: mainLineWeight });
-        layerInfo.shadowLayer.setStyle({ weight: mainLineWeight * 2 });
-      });
-    }
-
-    // Event-Listener für die Linienstärke-Änderung
-    document.addEventListener('DOMContentLoaded', () => {
-      const lineWeightInput = document.createElement('input');
-      lineWeightInput.type = 'number';
-      lineWeightInput.value = mainLineWeight;
-      lineWeightInput.min = 1;
-      lineWeightInput.max = 10;
-      lineWeightInput.style.marginTop = '10px';
-      lineWeightInput.style.padding = '5px';
-      lineWeightInput.addEventListener('change', (e) => {
-        const newWeight = parseInt(e.target.value, 10);
-        if (!isNaN(newWeight) && newWeight >= 1 && newWeight <= 10) {
-          changeLineWeight(newWeight);
-        }
-      });
-
-      const lineWeightLabel = document.createElement('label');
-      lineWeightLabel.textContent = 'Linienstärke: ';
-      lineWeightLabel.style.marginRight = '10px';
-
-      const lineWeightContainer = document.createElement('div');
-      lineWeightContainer.appendChild(lineWeightLabel);
-      lineWeightContainer.appendChild(lineWeightInput);
-
-      document.getElementById('kml-list').appendChild(lineWeightContainer);
     });
