@@ -215,7 +215,7 @@
 
           // Zoom auf diese KML
           const zoomItem = document.createElement('div');
-          zoomItem.textContent = 'Zoom';
+          zoomItem.textContent = 'Zoom auf diese KML';
           zoomItem.style.padding = '5px 10px';
           zoomItem.style.cursor = 'pointer';
           zoomItem.addEventListener('click', () => {
