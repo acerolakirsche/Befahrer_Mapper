@@ -9,12 +9,6 @@
       - Schriftarten und Textformatierungen
       - Responsive Design-Elemente
       - Animationen und Übergänge für Benutzerinteraktionen
-
-      Die Stile sind so gestaltet, dass sie:
-      - Eine klare und konsistente Benutzeroberfläche bieten
-      - Die Lesbarkeit und Bedienbarkeit verbessern
-      - Visuelle Hierarchien schaffen
-      - Interaktionen deutlich machen
     */
 
     body { margin: 0; }
@@ -49,17 +43,6 @@
     }
     .delete-icon:hover {
       color: #cc0000;
-    }
-    #zoom-to-selected {
-      margin-top: 10px;
-      padding: 5px 10px;
-      background: #0078d4;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    #zoom-to-selected:hover {
-      background: #005bb5;
     }
     #color-picker {
       display: flex;

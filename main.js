@@ -4,7 +4,6 @@
       Diese Datei enthält die Hauptlogik der Anwendung, einschließlich:
       - Initialisierung der Leaflet-Karte.
       - Drag & Drop-Funktionalität für KML-Dateien.
-      - Event-Listener für den "Zu ausgewählten KMLs zoomen"-Button.
       - Verwaltung der KML-Layer und ihrer Einträge in der Liste.
     */
     // Initialisiere die Karte mit einem Fokus auf Deutschland
@@ -33,21 +32,6 @@
       // Verarbeite alle Dateien, die per Drag & Drop hinzugefügt wurden
       const files = e.dataTransfer.files;
       processKMLFiles(files, map, kmlItems, layers);
-    });
-
-    // Event-Listener für den "Zu ausgewählten KMLs zoomen"-Button
-    document.getElementById('zoom-to-selected').addEventListener('click', () => {
-      const selectedLayers = layers.filter(layerInfo => layerInfo.checkbox.checked);
-      if (selectedLayers.length > 0) {
-        // Erstelle ein Array mit den Bounds aller ausgewählten Layer
-        const bounds = selectedLayers.map(layerInfo => layerInfo.mainLayer.getBounds());
-        // Kombiniere alle Bounds zu einem gemeinsamen Bound
-        const combinedBounds = bounds.reduce((acc, curr) => acc.extend(curr), L.latLngBounds(bounds[0]));
-        // Zoome zur kombinierten BoundingBox
-        map.fitBounds(combinedBounds);
-      } else {
-        alert('Bitte wähle mindestens eine KML-Datei aus.');
-      }
     });
 
     // Globale Variablen für die KML-Layer und die Liste der KML-Einträge
