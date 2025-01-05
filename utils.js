@@ -206,7 +206,7 @@
           const contextMenu = document.createElement('div');
           contextMenu.id = 'kml-context-menu';
           contextMenu.style.position = 'absolute';
-          contextMenu.style.right = `${window.innerWidth - e.pageX}px`; // Positioniere links vom Mauszeiger
+          contextMenu.style.left = `${e.pageX}px`; // Positioniere links vom Mauszeiger
           contextMenu.style.top = `${e.pageY}px`;
           contextMenu.style.backgroundColor = 'white';
           contextMenu.style.border = '1px solid #ccc';
@@ -219,7 +219,10 @@
           zoomItem.style.padding = '5px 10px';
           zoomItem.style.cursor = 'pointer';
           zoomItem.addEventListener('click', () => {
-            map.fitBounds(layerInfo.mainLayer.getBounds());
+            map.flyToBounds(layerInfo.mainLayer.getBounds(), {
+              duration: 1, // Dauer der Animation in Sekunden
+              easeLinearity: 0.25 // Geschwindigkeit der Animation
+            });
             contextMenu.remove();
           });
           contextMenu.appendChild(zoomItem);
@@ -234,7 +237,10 @@
             if (selectedLayers.length > 0) {
               const bounds = selectedLayers.map(l => l.mainLayer.getBounds());
               const combinedBounds = bounds.reduce((acc, curr) => acc.extend(curr), L.latLngBounds(bounds[0]));
-              map.fitBounds(combinedBounds);
+              map.flyToBounds(combinedBounds, {
+                duration: 1.5, // Längere Dauer für größere Zoom-Änderungen
+                easeLinearity: 0.25
+              });
             }
             contextMenu.remove();
           });
