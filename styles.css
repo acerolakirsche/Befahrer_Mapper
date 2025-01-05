@@ -1,113 +1,110 @@
 /*
-  styles.css
-  ==========
-  Diese Datei enthält alle Stile für die Leaflet-Kartenanwendung, einschließlich:
-  - Grundlegende Layout-Stile für die Karte und die KML-Liste
-  - Stile für die KML-Listeneinträge und deren Interaktionen
-  - Farbauswahl- und Checkbox-Stile
-  - Stile für das Kontextmenü und dessen Hover-Effekte
-  - Schriftarten und Textformatierungen
-  - Responsive Design-Elemente
-  - Animationen und Übergänge für Benutzerinteraktionen
+      styles.css
+      ==========
+      Diese Datei enthält alle Stile für die Leaflet-Kartenanwendung, einschließlich:
+      - Grundlegende Layout-Stile für die Karte und die KML-Liste
+      - Stile für die KML-Listeneinträge und deren Interaktionen
+      - Farbauswahl- und Checkbox-Stile
+      - Stile für das Kontextmenü und dessen Hover-Effekte
+      - Schriftarten und Textformatierungen
+      - Responsive Design-Elemente
+      - Animationen und Übergänge für Benutzerinteraktionen
 
-  Die Stile sind so gestaltet, dass sie:
-  - Eine klare und konsistente Benutzeroberfläche bieten
-  - Die Lesbarkeit und Bedienbarkeit verbessern
-  - Visuelle Hierarchien schaffen
-  - Interaktionen deutlich machen
-*/
+      Die Stile sind so gestaltet, dass sie:
+      - Eine klare und konsistente Benutzeroberfläche bieten
+      - Die Lesbarkeit und Bedienbarkeit verbessern
+      - Visuelle Hierarchien schaffen
+      - Interaktionen deutlich machen
+    */
 
-body { margin: 0; }
-#map { height: 100vh; }
-#kml-list {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: white;
-  padding: 10px;
-  z-index: 1000;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
-  max-height: 90vh;
-  overflow-y: auto;
-}
-.kml-item {
-  margin: 5px 0;
-  padding: 5px;
-  border-bottom: 1px solid #ddd;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.kml-item:hover {
-  background: #f0f0f0;
-}
-.delete-icon {
-  color: #ff4444;
-  cursor: pointer;
-  margin-left: 10px;
-}
-.delete-icon:hover {
-  color: #cc0000;
-}
-#zoom-to-selected {
-  margin-top: 10px;
-  padding: 5px 10px;
-  background: #0078d4;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-#zoom-to-selected:hover {
-  background: #005bb5;
-}
-#color-picker {
-  display: flex;
-  gap: 5px;
-  margin-bottom: 10px;
-}
-.color-box {
-  width: 20px;
-  height: 20px;
-  border: 1px solid #ccc;
-  cursor: pointer;
-}
-.color-box:hover {
-  border-color: #000;
-}
-#select-all-container {
-  margin-bottom: 10px;
-}
-.kml-item span {
-  font-family: Arial, sans-serif;
-  font-size: 0.8em;
-  white-space: normal;
-  word-wrap: break-word;
-  max-width: 150px;
-}
-.kml-number {
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 6.4em;
-  margin-right: 20px;
-  margin-left: 10px;
-  font-weight: bold;
-  color: #0078d4;
-}
-#kml-context-menu {
-  font-family: Arial, sans-serif;
-  font-size: 0.8em;
-  background: white;
-  border: 1px solid #ddd;
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
-  border-radius: 3px;
-  min-width: 180px;
-}
-#kml-context-menu div {
-  padding: 8px 12px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  color: #333;
-}
-#kml-context-menu div:hover {
-  background-color: #f5f5f5;
-}
+    body { margin: 0; }
+    #map { height: 100vh; }
+    #kml-list {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: white;
+      padding: 10px;
+      z-index: 1000;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .kml-item {
+      margin: 5px 0;
+      padding: 5px;
+      border-bottom: 1px solid #ddd;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .kml-item:hover {
+      background: #f0f0f0;
+    }
+    .delete-icon {
+      color: #ff4444;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+    .delete-icon:hover {
+      color: #cc0000;
+    }
+    #zoom-to-selected {
+      margin-top: 10px;
+      padding: 5px 10px;
+      background: #0078d4;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    #zoom-to-selected:hover {
+      background: #005bb5;
+    }
+    #color-picker {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 10px;
+    }
+    .color-box {
+      width: 20px;
+      height: 20px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+    }
+    .color-box:hover {
+      border-color: #000;
+    }
+    .kml-item span {
+      font-family: Arial, sans-serif;
+      font-size: 0.8em;
+      white-space: normal;
+      word-wrap: break-word;
+      max-width: 150px;
+    }
+    .kml-number {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 6.4em;
+      margin-right: 20px;
+      margin-left: 10px;
+      font-weight: bold;
+      color: #0078d4;
+    }
+    #kml-context-menu {
+      font-family: Arial, sans-serif;
+      font-size: 0.8em;
+      background: white;
+      border: 1px solid #ddd;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+      border-radius: 3px;
+      min-width: 180px;
+    }
+    #kml-context-menu div {
+      padding: 8px 12px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      color: #333;
+    }
+    #kml-context-menu div:hover {
+      background-color: #f5f5f5;
+    }

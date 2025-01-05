@@ -246,6 +246,32 @@
           });
           contextMenu.appendChild(zoomAllItem);
 
+          // Alle auswählen
+          const selectAllItem = document.createElement('div');
+          selectAllItem.textContent = 'Alle auswählen';
+          selectAllItem.style.padding = '5px 10px';
+          selectAllItem.style.cursor = 'pointer';
+          selectAllItem.addEventListener('click', () => {
+            layers.forEach(layer => {
+              layer.checkbox.checked = true;
+            });
+            contextMenu.remove();
+          });
+          contextMenu.appendChild(selectAllItem);
+
+          // Alle abwählen
+          const deselectAllItem = document.createElement('div');
+          deselectAllItem.textContent = 'Alle abwählen';
+          deselectAllItem.style.padding = '5px 10px';
+          deselectAllItem.style.cursor = 'pointer';
+          deselectAllItem.addEventListener('click', () => {
+            layers.forEach(layer => {
+              layer.checkbox.checked = false;
+            });
+            contextMenu.remove();
+          });
+          contextMenu.appendChild(deselectAllItem);
+
           document.body.appendChild(contextMenu);
 
           // Schließe das Menü bei Klick außerhalb
@@ -294,15 +320,6 @@
             layerInfo.mainLayer.setStyle({ color: selectedColor });
             layerInfo.color = selectedColor; // Aktualisiere die gespeicherte Farbe
           });
-        });
-      });
-
-      // Event-Listener für die "Alle auswählen"-Checkbox
-      const selectAllCheckbox = document.getElementById('select-all');
-      selectAllCheckbox.addEventListener('change', (e) => {
-        const isChecked = e.target.checked;
-        layers.forEach(layerInfo => {
-          layerInfo.checkbox.checked = isChecked;
         });
       });
     });
