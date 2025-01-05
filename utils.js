@@ -206,7 +206,7 @@
           const contextMenu = document.createElement('div');
           contextMenu.id = 'kml-context-menu';
           contextMenu.style.position = 'absolute';
-          contextMenu.style.left = `${e.pageX}px`;
+          contextMenu.style.right = `${window.innerWidth - e.pageX}px`; // Positioniere links vom Mauszeiger
           contextMenu.style.top = `${e.pageY}px`;
           contextMenu.style.backgroundColor = 'white';
           contextMenu.style.border = '1px solid #ccc';
