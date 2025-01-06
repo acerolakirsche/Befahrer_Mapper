@@ -25,14 +25,22 @@ body { margin: 0; }
   overflow-y: auto;
 }
 .kml-item {
+  position: relative;
   margin: 5px 0;
-  padding: 5px;
+  padding: 5px 5px 5px 16px; /* Linker Padding für den breiteren Farbstrich */
   border-bottom: 1px solid #ddd;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
   user-select: none; /* Verhindert Textselektion */
+}
+.color-stripe {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 6px; /* Strichstärke auf 6px */
+  height: 100%;
 }
 .kml-item:hover {
   background: #f0f0f0;
@@ -64,7 +72,7 @@ body { margin: 0; }
 }
 .kml-item span {
   font-family: Arial, sans-serif;
-  font-size: 0.8em;
+  font-size: 0.7em;
   white-space: normal;
   word-wrap: break-word;
   max-width: 150px;
@@ -72,9 +80,9 @@ body { margin: 0; }
 }
 .kml-number {
   font-family: 'Courier New', Courier, monospace;
-  font-size: 6.4em;
-  margin-right: 20px;
-  margin-left: 10px;
+  font-size: 8em;
+  margin-right: 4px; /* Abstand rechts */
+  margin-left: 2px; /* Abstand links */
   font-weight: bold;
   color: #0078d4;
   user-select: none; /* Verhindert Textselektion */
@@ -101,6 +109,7 @@ body { margin: 0; }
 .fa-eye-slash {
   color: #0078d4;
   cursor: pointer;
+  margin-right: 5px; /* Halbierter Abstand nach rechts */
 }
 .fa-eye-slash {
   color: #ccc;

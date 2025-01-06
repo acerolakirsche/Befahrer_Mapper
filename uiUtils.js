@@ -5,6 +5,12 @@ function createKMLListItem(file, layerInfo, kmlItems, layers, map) {
   const kmlItem = document.createElement('div');
   kmlItem.className = 'kml-item';
 
+  // Erstelle den Farbstrich
+  const colorStripe = document.createElement('div');
+  colorStripe.className = 'color-stripe';
+  colorStripe.style.backgroundColor = layerInfo.color; // Initiale Farbe
+  kmlItem.appendChild(colorStripe);
+
   // Erstelle das Augen-Symbol
   const eyeIcon = document.createElement('i');
   eyeIcon.className = 'fas fa-eye'; // Standard: Auge sichtbar
@@ -133,6 +139,11 @@ document.addEventListener('DOMContentLoaded', () => {
       selectedKMLs.forEach(layerInfo => {
         layerInfo.mainLayer.setStyle({ color: selectedColor });
         layerInfo.color = selectedColor; // Aktualisiere die gespeicherte Farbe
+        // Aktualisiere den Farbstrich
+        const kmlItem = document.querySelector(`[data-name="${layerInfo.name}"]`);
+        if (kmlItem) {
+          kmlItem.querySelector('.color-stripe').style.backgroundColor = selectedColor;
+        }
       });
     });
   });
