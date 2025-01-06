@@ -1,4 +1,6 @@
 // uiUtils.js
+let selectedKMLs = []; // Globale Variable für selektierte KMLs
+
 function createKMLListItem(file, layerInfo, kmlItems, layers, map) {
   const kmlItem = document.createElement('div');
   kmlItem.className = 'kml-item';
@@ -49,14 +51,63 @@ function createKMLListItem(file, layerInfo, kmlItems, layers, map) {
     map.removeLayer(layerInfo.shadowLayer);
     kmlItems.removeChild(kmlItem);
     layers.splice(layers.indexOf(layerInfo), 1);
+    selectedKMLs = selectedKMLs.filter(selected => selected !== layerInfo); // Entferne aus Selektion
   };
   kmlItem.appendChild(deleteIcon);
 
+  // Event-Listener für die Selektierung
+  kmlItem.addEventListener('click', (e) => {
+    e.stopPropagation();
+
+    if (e.metaKey || e.ctrlKey) {
+      // Command/Strg + Klick: Einzelne Auswahl hinzufügen/entfernen
+      if (selectedKMLs.includes(layerInfo)) {
+        selectedKMLs = selectedKMLs.filter(selected => selected !== layerInfo);
+        kmlItem.classList.remove('selected');
+      } else {
+        selectedKMLs.push(layerInfo);
+        kmlItem.classList.add('selected');
+      }
+    } else if (e.shiftKey) {
+      // Shift + Klick: Bereichsauswahl basierend auf der sichtbaren Reihenfolge
+      const visibleItems = Array.from(kmlItems.children);
+      const startIndex = visibleItems.findIndex(item => selectedKMLs.includes(layers.find(layer => layer.name === item.getAttribute('data-name'))));
+      const endIndex = visibleItems.indexOf(kmlItem);
+
+      if (startIndex !== -1 && endIndex !== -1) {
+        const range = visibleItems.slice(
+          Math.min(startIndex, endIndex),
+          Math.max(startIndex, endIndex) + 1
+        );
+        range.forEach(item => {
+          const layer = layers.find(layer => layer.name === item.getAttribute('data-name'));
+          if (layer && !selectedKMLs.includes(layer)) {
+            selectedKMLs.push(layer);
+            item.classList.add('selected');
+          }
+        });
+      }
+    } else {
+      // Einfacher Klick: Einzelauswahl
+      selectedKMLs.forEach(selected => {
+        const item = kmlItems.querySelector(`[data-name="${selected.name}"]`);
+        if (item) item.classList.remove('selected');
+      });
+      selectedKMLs = [layerInfo];
+      kmlItem.classList.add('selected');
+    }
+
+    // Aktualisiere die Farbe der selektierten KMLs
+    updateSelectedKMLs();
+  });
+
+  // Event-Listener für das Kontextmenü (Rechtsklick)
   kmlItem.addEventListener('contextmenu', (e) => {
     e.preventDefault();
     createContextMenu(e, layerInfo, map, layers);
   });
 
+  kmlItem.setAttribute('data-name', file.name);
   kmlItems.appendChild(kmlItem);
   sortKMLList(kmlItems);
 }
@@ -79,13 +130,19 @@ document.addEventListener('DOMContentLoaded', () => {
   colorBoxes.forEach(colorBox => {
     colorBox.addEventListener('click', () => {
       const selectedColor = colorBox.getAttribute('data-color');
-      const visibleLayers = layers.filter(layerInfo => !layerInfo.eyeIcon.classList.contains('fa-eye-slash'));
-
-      // Ändere die Farbe der sichtbaren Layer
-      visibleLayers.forEach(layerInfo => {
+      selectedKMLs.forEach(layerInfo => {
         layerInfo.mainLayer.setStyle({ color: selectedColor });
         layerInfo.color = selectedColor; // Aktualisiere die gespeicherte Farbe
       });
     });
   });
 });
+
+function updateSelectedKMLs() {
+  const kmlItems = document.getElementById('kml-items');
+  kmlItems.querySelectorAll('.kml-item').forEach(item => {
+    const name = item.getAttribute('data-name');
+    const isSelected = selectedKMLs.some(layerInfo => layerInfo.name === name);
+    item.classList.toggle('selected', isSelected);
+  });
+}
