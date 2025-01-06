@@ -4,12 +4,11 @@
     ## Vorab-Prompt:
 		Vorabinformationen für Dich:
 		Bitte in Deinen Antworten immer vollständigen Code schicken, niemals nur Snippets.
-		Niemals einen lokalen Server nutzen.
+		Das Projekt liegt auf dem Webspace von STRATO, und man kann dort mit php auch Serverfunktionalität nutzen.
 		Niemals Vite nutzen.
+		Niemals hier in der Entwicklungsumgebung einen WebContainer starten.
 		Niemals ES-Module nutzen.
-		Der Code muss immer ohne lokalen Server funktionieren.
 		Der Code darf keine CORS Probleme verursachen, also bitte auf Kompatibilität achten!
-		
 		
 		Bitte jetzt noch nichts ändern. Es war nur eine Information für Dich.
 		

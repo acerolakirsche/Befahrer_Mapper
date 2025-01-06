@@ -1,35 +1,59 @@
 <!DOCTYPE html>
-    <html lang="de">
-      <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Leaflet Map with Select All Checkbox</title>
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-        <link rel="stylesheet" href="styles.css" />
-      </head>
-      <body>
-        <div id="map"></div>
-        <div id="kml-list">
-          <h3>KML-Dateien</h3>
-          <div id="color-picker">
-            <div class="color-box" style="background-color: #ff0000;" data-color="#ff0000"></div>
-            <div class="color-box" style="background-color: #00ff00;" data-color="#00ff00"></div>
-            <div class="color-box" style="background-color: #0000ff;" data-color="#0000ff"></div>
-            <div class="color-box" style="background-color: #ffff00;" data-color="#ffff00"></div>
-            <div class="color-box" style="background-color: #ff00ff;" data-color="#ff00ff"></div>
-            <div class="color-box" style="background-color: #00ffff;" data-color="#00ffff"></div>
-            <div class="color-box" style="background-color: #ff8000;" data-color="#ff8000"></div>
-            <div class="color-box" style="background-color: #8000ff;" data-color="#8000ff"></div>
-          </div>
-          <div id="kml-items"></div>
-        </div>
-        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-        <script src="https://unpkg.com/@mapbox/togeojson@0.16.0/togeojson.js"></script>
-        <script src="kmlProcessor.js"></script>
-        <script src="uiUtils.js"></script>
-        <script src="messageUtils.js"></script>
-        <script src="contextMenu.js"></script>
-        <script src="main.js"></script>
-      </body>
-    </html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Leaflet Map with Select All Checkbox</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="map"></div>
+    <div id="kml-list">
+      <h3>KML-Dateien</h3>
+      <form id="folder-form">
+        <input type="text" name="folderName" id="folder-name" placeholder="Ordnername eingeben" required>
+        <button type="submit" id="create-folder-btn">Ordner erstellen</button>
+      </form>
+      <div id="color-picker">
+        <div class="color-box" style="background-color: #ff0000;" data-color="#ff0000"></div>
+        <div class="color-box" style="background-color: #00ff00;" data-color="#00ff00"></div>
+        <div class="color-box" style="background-color: #0000ff;" data-color="#0000ff"></div>
+        <div class="color-box" style="background-color: #ffff00;" data-color="#ffff00"></div>
+        <div class="color-box" style="background-color: #ff00ff;" data-color="#ff00ff"></div>
+        <div class="color-box" style="background-color: #00ffff;" data-color="#00ffff"></div>
+        <div class="color-box" style="background-color: #ff8000;" data-color="#ff8000"></div>
+        <div class="color-box" style="background-color: #8000ff;" data-color="#8000ff"></div>
+      </div>
+      <div id="kml-items"></div>
+    </div>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/@mapbox/togeojson@0.16.0/togeojson.js"></script>
+    <script src="kmlProcessor.js"></script>
+    <script src="uiUtils.js"></script>
+    <script src="messageUtils.js"></script>
+    <script src="contextMenu.js"></script>
+    <script src="main.js"></script>
+    <script>
+      document.getElementById('folder-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        
+        fetch('createFolder.php', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.text())
+        .then(message => {
+          const color = message.includes('erfolgreich') ? '#4CAF50' : '#ffa500';
+          showTempMessage(message, color);
+        })
+        .catch(error => {
+          showTempMessage('Fehler bei der Kommunikation mit dem Server', '#ff0000');
+        });
+      });
+    </script>
+  </body>
+</html>
