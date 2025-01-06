@@ -3,13 +3,33 @@ function createKMLListItem(file, layerInfo, kmlItems, layers, map) {
   const kmlItem = document.createElement('div');
   kmlItem.className = 'kml-item';
 
-  const checkbox = document.createElement('input');
-  checkbox.type = 'checkbox';
-  checkbox.style.marginRight = '10px';
-  layerInfo.checkbox = checkbox;
+  // Erstelle das Augen-Symbol
+  const eyeIcon = document.createElement('i');
+  eyeIcon.className = 'fas fa-eye'; // Standard: Auge sichtbar
+  eyeIcon.style.marginRight = '10px';
+  eyeIcon.style.cursor = 'pointer';
+  layerInfo.eyeIcon = eyeIcon;
 
-  checkbox.addEventListener('click', (e) => e.stopPropagation());
-  kmlItem.appendChild(checkbox);
+  // Event-Listener für das Augen-Symbol
+  eyeIcon.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isVisible = !eyeIcon.classList.contains('fa-eye-slash');
+    if (isVisible) {
+      // Blende die KML aus
+      map.removeLayer(layerInfo.mainLayer);
+      map.removeLayer(layerInfo.shadowLayer);
+      eyeIcon.classList.remove('fa-eye');
+      eyeIcon.classList.add('fa-eye-slash');
+    } else {
+      // Blende die KML ein
+      map.addLayer(layerInfo.shadowLayer);
+      map.addLayer(layerInfo.mainLayer);
+      eyeIcon.classList.remove('fa-eye-slash');
+      eyeIcon.classList.add('fa-eye');
+    }
+  });
+
+  kmlItem.appendChild(eyeIcon);
 
   const number = extractNumberFromFilename(file.name);
   const numberElement = document.createElement('span');
@@ -31,12 +51,6 @@ function createKMLListItem(file, layerInfo, kmlItems, layers, map) {
     layers.splice(layers.indexOf(layerInfo), 1);
   };
   kmlItem.appendChild(deleteIcon);
-
-  kmlItem.addEventListener('click', (e) => {
-    if (!e.target.matches('input[type="checkbox"]') && !e.target.matches('.delete-icon')) {
-      checkbox.checked = !checkbox.checked;
-    }
-  });
 
   kmlItem.addEventListener('contextmenu', (e) => {
     e.preventDefault();
@@ -65,10 +79,10 @@ document.addEventListener('DOMContentLoaded', () => {
   colorBoxes.forEach(colorBox => {
     colorBox.addEventListener('click', () => {
       const selectedColor = colorBox.getAttribute('data-color');
-      const selectedLayers = layers.filter(layerInfo => layerInfo.checkbox.checked);
+      const visibleLayers = layers.filter(layerInfo => !layerInfo.eyeIcon.classList.contains('fa-eye-slash'));
 
-      // Ändere die Farbe der ausgewählten Layer
-      selectedLayers.forEach(layerInfo => {
+      // Ändere die Farbe der sichtbaren Layer
+      visibleLayers.forEach(layerInfo => {
         layerInfo.mainLayer.setStyle({ color: selectedColor });
         layerInfo.color = selectedColor; // Aktualisiere die gespeicherte Farbe
       });
