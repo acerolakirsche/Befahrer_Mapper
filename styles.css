@@ -23,6 +23,7 @@ body { margin: 0; }
   box-shadow: 0 0 10px rgba(0,0,0,0.2);
   max-height: 90vh;
   overflow-y: auto;
+  width: 345px; /* Neue Breite: 300px * 1.15 = 345px */
 }
 .kml-item {
   position: relative;
@@ -75,7 +76,7 @@ body { margin: 0; }
   font-size: 0.7em;
   white-space: normal;
   word-wrap: break-word;
-  max-width: 150px;
+  max-width: 230px; /* Angepasst für breiteres Panel */
   user-select: none; /* Verhindert Textselektion */
 }
 .kml-number {
