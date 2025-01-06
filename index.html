@@ -1,12 +1,4 @@
-<!--
-      index.html
-      ==========
-      Diese Datei ist das Haupt-HTML-Dokument der Anwendung. Sie enthält:
-      - Die Struktur der Webseite (Karte und KML-Liste).
-      - Die Einbindung von externen Bibliotheken (Leaflet, Font Awesome).
-      - Die Einbindung der lokalen CSS- und JavaScript-Dateien.
-    -->
-    <!DOCTYPE html>
+<!DOCTYPE html>
     <html lang="de">
       <head>
         <meta charset="UTF-8" />
@@ -21,7 +13,6 @@
         <div id="kml-list">
           <h3>KML-Dateien</h3>
           <div id="color-picker">
-            <!-- Farbkästchen für die Farbauswahl -->
             <div class="color-box" style="background-color: #ff0000;" data-color="#ff0000"></div>
             <div class="color-box" style="background-color: #00ff00;" data-color="#00ff00"></div>
             <div class="color-box" style="background-color: #0000ff;" data-color="#0000ff"></div>
@@ -35,7 +26,10 @@
         </div>
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
         <script src="https://unpkg.com/@mapbox/togeojson@0.16.0/togeojson.js"></script>
-        <script src="utils.js"></script>
+        <script src="kmlProcessor.js"></script>
+        <script src="uiUtils.js"></script>
+        <script src="messageUtils.js"></script>
+        <script src="contextMenu.js"></script>
         <script src="main.js"></script>
       </body>
     </html>

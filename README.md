@@ -1,7 +1,19 @@
 # Befahrer Mapper
 # Leaflet Map with KML Import and Management
 
-    ## Projektbeschreibung
+    ## Vorab-Prompt:
+		Vorabinformationen für Dich:
+		Bitte in Deinen Antworten immer vollständigen Code schicken, niemals nur Snippets.
+		Niemals einen lokalen Server nutzen.
+		Niemals Vite nutzen.
+		Niemals ES-Module nutzen.
+		Der Code muss immer ohne lokalen Server funktionieren.
+		Der Code darf keine CORS Probleme verursachen, also bitte auf Kompatibilität achten!
+		
+		
+		Bitte jetzt noch nichts ändern. Es war nur eine Information für Dich.
+		
+		## Projektbeschreibung
     Dieses Projekt ist eine webbasierte Anwendung, die es Benutzern ermöglicht, KML-Dateien (Keyhole Markup Language) per Drag & Drop auf eine interaktive Karte zu importieren. Die Anwendung bietet eine Vielzahl von Funktionen zur Verwaltung und Visualisierung der KML-Daten, einschließlich Farbauswahl, Zoom-Funktionen und einer übersichtlichen Darstellung der importierten Dateien.
 
     ## Funktionen
