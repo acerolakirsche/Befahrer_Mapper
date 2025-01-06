@@ -1,4 +1,4 @@
-# bolt-generated-project
+# Befahrer Mapper
 # Leaflet Map with KML Import and Management
 
     ## Projektbeschreibung
