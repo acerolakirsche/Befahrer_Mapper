@@ -15,7 +15,7 @@ const shadowLineWeight = mainLineWeight * 2; // Weight of the shadow line
 
 /**
  * Processes multiple KML files
- * @param {FileList} files - List of KML files to process
+ * @param {FileList|Array} files - List of KML files to process
  * @param {L.Map} map - Leaflet map instance
  * @param {HTMLElement} kmlItems - Container for KML list items
  * @param {Array} layers - Array to store layer information
@@ -106,7 +106,16 @@ function processKMLFile(file, map, kmlItems, layers) {
   };
   
   // Start reading the file
-  reader.readAsText(file);
+  if (file.size > 0) {
+    reader.readAsText(file);
+  } else {
+    // Handle server-side files
+    fetch(`Befahrungsprojekte/${currentProject}/${file.name}`)
+      .then(response => response.text())
+      .then(kml => {
+        reader.readAsText(new Blob([kml], { type: 'text/xml' }));
+      });
+  }
 }
 
 /**

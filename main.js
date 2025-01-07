@@ -64,6 +64,45 @@ const layers = []; // Stores information about all KML layers
 const kmlItems = document.getElementById('kml-items'); // Container for KML list items
 const projectSelector = document.getElementById('project-selector');
 const selectedProjectDisplay = document.getElementById('selected-project-display');
+let currentProject = null; // Track currently selected project
+
+/**
+ * Loads KML files from selected project folder
+ * @param {string} projectName - Name of the project folder
+ */
+async function loadProjectKMLs(projectName) {
+  if (projectName === currentProject) return; // Skip if same project selected
+  
+  // Clear existing layers and list
+  layers.forEach(layerInfo => {
+    map.removeLayer(layerInfo.mainLayer);
+    map.removeLayer(layerInfo.shadowLayer);
+  });
+  layers.length = 0;
+  kmlItems.innerHTML = '';
+  
+  try {
+    const response = await fetch(`Befahrungsprojekte/${projectName}/`);
+    const text = await response.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(text, 'text/html');
+    
+    // Extract KML files from directory listing
+    const kmlFiles = Array.from(doc.querySelectorAll('a'))
+      .map(a => a.textContent)
+      .filter(name => name.endsWith('.kml'))
+      .map(name => new File([], name));
+    
+    if (kmlFiles.length > 0) {
+      processKMLFiles(kmlFiles, map, kmlItems, layers);
+    }
+    
+    currentProject = projectName;
+  } catch (error) {
+    console.error('Error loading project KMLs:', error);
+    showTempMessage('Error loading project KMLs', '#ff4444');
+  }
+}
 
 // Fetch and populate the project dropdown
 fetch('getProjects.php')
@@ -84,4 +123,7 @@ fetch('getProjects.php')
 projectSelector.addEventListener('change', function() {
   const selectedProject = this.value;
   selectedProjectDisplay.textContent = selectedProject;
+  if (selectedProject) {
+    loadProjectKMLs(selectedProject);
+  }
 });

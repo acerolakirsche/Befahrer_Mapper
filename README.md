@@ -3,6 +3,9 @@
 
 ## Vorab-Prompt:
     Vorabinformationen für Dich:
+		Implementiere stets Deine Änderungen in die vorhandenen Dateien, und achte darauf, dass Du die von den Änderungen nicht betroffenen Bereiche nicht löschst oder unbrauchbar machst.
+		Füge keine Zeilennummern an den Beginn jeder Zeile.
+		Beachte, dass wir uns hier in der Entwicklungsumgebung im selben Verzeichnis befinden, wie die Dateien dieses Projektes.
     Bitte in Deinen Antworten immer vollständigen Code generieren, niemals nur Snippets.
 		Bitte den Code immer ausführlich mit englischen Kommentaren versehen, damit er gut lesbar für Anfänger ist.
 		Bitte Kommentare im Code gegebenenfalls aktualisieren.
