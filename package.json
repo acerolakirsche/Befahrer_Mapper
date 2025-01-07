@@ -1,12 +1,20 @@
 {
-      "name": "befahrer-mapper",
-      "version": "1.0.0",
-      "scripts": {
-            "dev": "vite",
-            "build": "vite build",
-            "preview": "vite preview"
-      },
-      "devDependencies": {
-            "vite": "^5.4.11"
-      }
+  /**
+   * package.json
+   * ============
+   * This file defines the project configuration and dependencies.
+   * Note: This project doesn't use Vite or ES modules as per requirements.
+   * The Vite configuration here is included for reference but should not be used.
+   */
+  
+  "name": "befahrer-mapper",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vite", // Not to be used (see project requirements)
+    "build": "vite build", // Not to be used
+    "preview": "vite preview" // Not to be used
+  },
+  "devDependencies": {
+    "vite": "^5.4.11" // Included but should not be used
+  }
 }

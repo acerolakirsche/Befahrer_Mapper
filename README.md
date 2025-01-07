@@ -1,71 +1,79 @@
 # Befahrer Mapper
 # Leaflet Map with KML Import and Management
 
-    ## Vorab-Prompt:
-		Vorabinformationen für Dich:
-		Bitte in Deinen Antworten immer vollständigen Code schicken, niemals nur Snippets.
-		Das Projekt liegt auf dem Webspace von STRATO, und man kann dort mit php auch Serverfunktionalität nutzen.
-		Niemals Vite nutzen.
-		Niemals hier in der Entwicklungsumgebung einen WebContainer starten.
-		Niemals ES-Module nutzen.
-		Der Code darf keine CORS Probleme verursachen, also bitte auf Kompatibilität achten!
-		
-		Bitte jetzt noch nichts ändern. Es war nur eine Information für Dich.
-		
-		## Projektbeschreibung
-    Dieses Projekt ist eine webbasierte Anwendung, die es Benutzern ermöglicht, KML-Dateien (Keyhole Markup Language) per Drag & Drop auf eine interaktive Karte zu importieren. Die Anwendung bietet eine Vielzahl von Funktionen zur Verwaltung und Visualisierung der KML-Daten, einschließlich Farbauswahl, Zoom-Funktionen und einer übersichtlichen Darstellung der importierten Dateien.
+## Vorab-Prompt:
+    Vorabinformationen für Dich:
+    Bitte in Deinen Antworten immer vollständigen Code schicken, niemals nur Snippets.
+    Das Projekt liegt auf dem Webspace von STRATO, und man kann dort mit php auch Serverfunktionalität nutzen.
+    Niemals Vite nutzen.
+    Niemals hier in der Entwicklungsumgebung einen WebContainer starten.
+    Niemals ES-Module nutzen.
+    Der Code darf keine CORS Probleme verursachen, also bitte auf Kompatibilität achten!
+    
+    Bitte jetzt noch nichts ändern. Es war nur eine Information für Dich.
 
-    ## Funktionen
-    ### KML-Dateien importieren
-    - **Drag & Drop**: KML-Dateien können per Drag & Drop auf die Karte gezogen werden.
-    - **Verdoppelungsschutz**: Doppelte KML-Dateien werden ignoriert, und der Benutzer wird darüber informiert.
-    - **Meldungen**: Erfolgreich hinzugefügte und ignorierte Dateien werden in übersichtlichen Meldungen angezeigt.
+## Project Description
+This project is a web-based application that allows users to import KML files (Keyhole Markup Language) via drag & drop onto an interactive map. The application provides a variety of features for managing and visualizing KML data, including color selection, zoom functions, and a clear display of imported files.
 
-    ### Visualisierung
-    - **Linien und Schattenlinien**: Jede KML-Datei wird als Linie auf der Karte dargestellt, mit einer schwarzen Schattenlinie darunter für bessere Sichtbarkeit.
-    - **Farbauswahl**: 8 vordefinierte Farben stehen zur Verfügung, um die Linien der ausgewählten KML-Dateien einzufärben.
-    - **Zoom-Funktionen**:
-      - Klicken auf einen Listeneintrag zoomt auf die entsprechende KML-Datei.
-      - Ein Button ermöglicht das Zoomen auf alle ausgewählten KML-Dateien.
+## Features
+### KML File Import
+- **Drag & Drop**: KML files can be dragged and dropped onto the map.
+- **Duplicate Protection**: Duplicate KML files are ignored, and the user is informed.
+- **Messages**: Successfully added and ignored files are displayed in clear messages.
 
-    ### Benutzeroberfläche
-    - **Checkboxen**: Jede KML-Datei hat eine Checkbox für die Auswahl.
-    - **"Alle auswählen"**: Eine Checkbox ermöglicht das Auswählen/Abwählen aller KML-Dateien.
-    - **Zahl aus dem Dateinamen**: Eine zweistellige Zahl wird aus dem Dateinamen extrahiert und groß angezeigt.
-    - **Stile**: Die Schrift der KML-Bezeichnungen ist serifenlos und klein, während die Zahl groß und gut sichtbar ist.
+### Visualization
+- **Lines and Shadow Lines**: Each KML file is displayed as a line on the map, with a black shadow line underneath for better visibility.
+- **Color Selection**: 8 predefined colors are available to color the lines of selected KML files.
+- **Zoom Functions**:
+  - Clicking on a list entry zooms to the corresponding KML file.
+  - A button allows zooming to all selected KML files.
 
-    ### Fehlerbehandlung und Optimierungen
-    - **Fehlermeldungen**: Ungültige Dateitypen werden abgelehnt, und der Benutzer wird informiert.
-    - **Performance**: Die Anwendung ist für die Verarbeitung vieler KML-Dateien optimiert.
+### User Interface
+- **Checkboxes**: Each KML file has a checkbox for selection.
+- **"Select All"**: A checkbox allows selecting/deselecting all KML files.
+- **Number from Filename**: A two-digit number is extracted from the filename and displayed prominently.
+- **Styles**: The font of KML labels is sans-serif and small, while the number is large and easily visible.
 
-    ## Probleme, die beseitigt wurden
-    - **Verdoppelungsschutz**: Doppelte KML-Dateien werden ignoriert, und der Benutzer wird darüber informiert.
-    - **Meldungen**: Die Meldungen für ignorierte und erfolgreich hinzugefügte Dateien überlappen sich nicht mehr und sind übersichtlich gestaltet.
-    - **Benutzerfreundlichkeit**: Die Anwendung wurde durch klare Meldungen und eine intuitive Benutzeroberfläche verbessert.
+### Error Handling and Optimizations
+- **Error Messages**: Invalid file types are rejected, and the user is informed.
+- **Performance**: The application is optimized for processing many KML files.
 
-    ## Mögliche Erweiterungen
-    - **Linienstärke anpassen**: Eine Funktion, um die Linienstärke der Hauptlinie über die Benutzeroberfläche zu ändern.
-    - **Exportfunktion**: Möglichkeit, die aktuelle Kartenansicht als Bild oder PDF zu exportieren.
-    - **Erweiterte Fehlerbehandlung**: Bessere Fehlermeldungen für ungültige oder beschädigte KML-Dateien.
-    - **Datenbankintegration**: Speicherung der importierten KML-Dateien in einer Datenbank für persistente Nutzung.
-    - **Benutzerkonten**: Einführung von Benutzerkonten, um individuelle Karten und Einstellungen zu speichern.
-    - **Layer-Management**: Möglichkeit, Layer zu gruppieren und zu verwalten, um die Übersichtlichkeit zu verbessern.
+## Problems Solved
+- **Duplicate Protection**: Duplicate KML files are ignored, and the user is informed.
+- **Messages**: Messages for ignored and successfully added files no longer overlap and are clearly designed.
+- **User Friendliness**: The application has been improved through clear messages and an intuitive user interface.
 
-    ## Technologien
-    - **Leaflet.js**: Für die interaktive Karte.
-    - **HTML/CSS/JavaScript**: Für die Benutzeroberfläche und Logik.
-    - **toGeoJSON**: Für die Konvertierung von KML zu GeoJSON.
+## Possible Extensions
+- **Adjust Line Thickness**: A function to change the line thickness of the main line via the user interface.
+- **Export Function**: Ability to export the current map view as an image or PDF.
+- **Advanced Error Handling**: Better error messages for invalid or corrupted KML files.
+- **Database Integration**: Storage of imported KML files in a database for persistent use.
+- **User Accounts**: Introduction of user accounts to save individual maps and settings.
+- **Layer Management**: Ability to group and manage layers to improve clarity.
 
-    ## Installation und Nutzung
-    1. Klonen Sie das Repository oder laden Sie die Dateien herunter.
-    2. Öffnen Sie die `index.html` in einem modernen Webbrowser.
-    3. Ziehen Sie KML-Dateien per Drag & Drop auf die Karte, um sie zu importieren.
+## Technologies
+- **Leaflet.js**: For the interactive map.
+- **HTML/CSS/JavaScript**: For the user interface and logic.
+- **toGeoJSON**: For converting KML to GeoJSON.
+- **PHP**: For server-side functionality like folder creation.
 
-    ## Lizenz
-    Dieses Projekt steht unter der MIT-Lizenz. Weitere Informationen finden Sie in der `LICENSE`-Datei.
+## Installation and Usage
+1. Clone the repository or download the files.
+2. Open the `index.html` in a modern web browser.
+3. Drag and drop KML files onto the map to import them.
 
-    ## Kontakt
-    Bei Fragen oder Anregungen können Sie sich gerne an den Projektbetreuer wenden.
+## License
+This project is licensed under the MIT License. See the `LICENSE` file for more information.
 
-    ## Danksagung
-    Vielen Dank an alle, die zu diesem Projekt beigetragen haben, insbesondere an die Entwickler von Leaflet.js und toGeoJSON.
+## Contact
+For questions or suggestions, please contact the project maintainer.
+
+## Acknowledgments
+Thanks to everyone who contributed to this project, especially the developers of Leaflet.js and toGeoJSON.
+
+## Recent Updates
+- Added PHP-based folder creation functionality
+- Improved error handling and user feedback
+- Enhanced UI with better color selection and visibility controls
+- Added context menu for quick access to zoom functions
+- Improved performance for handling multiple KML files

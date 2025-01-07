@@ -1,21 +1,41 @@
 <!DOCTYPE html>
 <html lang="de">
   <head>
+    <!--
+      index.html
+      ==========
+      This is the main HTML file for the KML Mapper application.
+      It includes:
+      - The map container
+      - KML file list and controls
+      - Color picker for KML styling
+      - Folder creation form
+      - All necessary script and style imports
+    -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Leaflet Map with Select All Checkbox</title>
+    
+    <!-- External CSS Imports -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <!-- Main map container -->
     <div id="map"></div>
+    
+    <!-- Side panel for KML controls -->
     <div id="kml-list">
-      <h3>KML-Dateien</h3>
+      <h3>KML Files</h3>
+      
+      <!-- Folder creation form -->
       <form id="folder-form">
-        <input type="text" name="folderName" id="folder-name" placeholder="Ordnername eingeben" required>
-        <button type="submit" id="create-folder-btn">Ordner erstellen</button>
+        <input type="text" name="folderName" id="folder-name" placeholder="Enter folder name" required>
+        <button type="submit" id="create-folder-btn">Create Folder</button>
       </form>
+      
+      <!-- Color picker for KML styling -->
       <div id="color-picker">
         <div class="color-box" style="background-color: #ff0000;" data-color="#ff0000"></div>
         <div class="color-box" style="background-color: #00ff00;" data-color="#00ff00"></div>
@@ -26,32 +46,44 @@
         <div class="color-box" style="background-color: #ff8000;" data-color="#ff8000"></div>
         <div class="color-box" style="background-color: #8000ff;" data-color="#8000ff"></div>
       </div>
+      
+      <!-- Container for KML file list items -->
       <div id="kml-items"></div>
     </div>
+    
+    <!-- External JavaScript Imports -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/@mapbox/togeojson@0.16.0/togeojson.js"></script>
+    
+    <!-- Application Scripts -->
     <script src="kmlProcessor.js"></script>
     <script src="uiUtils.js"></script>
     <script src="messageUtils.js"></script>
     <script src="contextMenu.js"></script>
     <script src="main.js"></script>
+    
+    <!-- Folder creation form handler -->
     <script>
       document.getElementById('folder-form').addEventListener('submit', function(e) {
         e.preventDefault();
         
+        // Create FormData object from the form
         const formData = new FormData(this);
         
+        // Send POST request to createFolder.php
         fetch('createFolder.php', {
           method: 'POST',
           body: formData
         })
         .then(response => response.text())
         .then(message => {
-          const color = message.includes('erfolgreich') ? '#4CAF50' : '#ffa500';
+          // Show success/error message with appropriate color
+          const color = message.includes('successfully') ? '#4CAF50' : '#ffa500';
           showTempMessage(message, color);
         })
         .catch(error => {
-          showTempMessage('Fehler bei der Kommunikation mit dem Server', '#ff0000');
+          // Show error message if request fails
+          showTempMessage('Error communicating with server', '#ff0000');
         });
       });
     </script>

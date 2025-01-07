@@ -1,35 +1,55 @@
-// uiUtils.js
-let selectedKMLs = []; // Globale Variable für selektierte KMLs
+/**
+ * uiUtils.js
+ * ==========
+ * This script contains utility functions for managing the user interface, including:
+ * - Creating and managing KML list items
+ * - Handling layer selection and visibility
+ * - Managing color selection for KML layers
+ * - Sorting and updating the KML list
+ * - Handling context menu interactions
+ */
 
+// Global variable to track selected KMLs
+let selectedKMLs = [];
+
+/**
+ * Creates a list item for a KML file
+ * @param {File} file - The KML file
+ * @param {Object} layerInfo - Information about the KML layer
+ * @param {HTMLElement} kmlItems - Container for KML list items
+ * @param {Array} layers - Array of all KML layers
+ * @param {L.Map} map - Leaflet map instance
+ */
 function createKMLListItem(file, layerInfo, kmlItems, layers, map) {
+  // Create container for the list item
   const kmlItem = document.createElement('div');
   kmlItem.className = 'kml-item';
 
-  // Erstelle den Farbstrich
+  // Create color stripe indicating layer color
   const colorStripe = document.createElement('div');
   colorStripe.className = 'color-stripe';
-  colorStripe.style.backgroundColor = layerInfo.color; // Initiale Farbe
+  colorStripe.style.backgroundColor = layerInfo.color;
   kmlItem.appendChild(colorStripe);
 
-  // Erstelle das Augen-Symbol
+  // Create eye icon for visibility control
   const eyeIcon = document.createElement('i');
-  eyeIcon.className = 'fas fa-eye'; // Standard: Auge sichtbar
+  eyeIcon.className = 'fas fa-eye';
   eyeIcon.style.marginRight = '10px';
   eyeIcon.style.cursor = 'pointer';
   layerInfo.eyeIcon = eyeIcon;
 
-  // Event-Listener für das Augen-Symbol
+  // Add click handler for visibility toggle
   eyeIcon.addEventListener('click', (e) => {
     e.stopPropagation();
     const isVisible = !eyeIcon.classList.contains('fa-eye-slash');
     if (isVisible) {
-      // Blende die KML aus
+      // Hide the layer
       map.removeLayer(layerInfo.mainLayer);
       map.removeLayer(layerInfo.shadowLayer);
       eyeIcon.classList.remove('fa-eye');
       eyeIcon.classList.add('fa-eye-slash');
     } else {
-      // Blende die KML ein
+      // Show the layer
       map.addLayer(layerInfo.shadowLayer);
       map.addLayer(layerInfo.mainLayer);
       eyeIcon.classList.remove('fa-eye-slash');
@@ -39,16 +59,19 @@ function createKMLListItem(file, layerInfo, kmlItems, layers, map) {
 
   kmlItem.appendChild(eyeIcon);
 
+  // Extract and display number from filename
   const number = extractNumberFromFilename(file.name);
   const numberElement = document.createElement('span');
   numberElement.className = 'kml-number';
   numberElement.textContent = number;
   kmlItem.appendChild(numberElement);
 
+  // Display filename
   const fileName = document.createElement('span');
   fileName.textContent = file.name;
   kmlItem.appendChild(fileName);
 
+  // Add delete icon
   const deleteIcon = document.createElement('i');
   deleteIcon.className = 'fas fa-trash delete-icon';
   deleteIcon.onclick = (e) => {
@@ -57,16 +80,17 @@ function createKMLListItem(file, layerInfo, kmlItems, layers, map) {
     map.removeLayer(layerInfo.shadowLayer);
     kmlItems.removeChild(kmlItem);
     layers.splice(layers.indexOf(layerInfo), 1);
-    selectedKMLs = selectedKMLs.filter(selected => selected !== layerInfo); // Entferne aus Selektion
+    selectedKMLs = selectedKMLs.filter(selected => selected !== layerInfo);
   };
   kmlItem.appendChild(deleteIcon);
 
-  // Event-Listener für die Selektierung
+  // Add click handler for selection
   kmlItem.addEventListener('click', (e) => {
     e.stopPropagation();
 
+    // Handle different selection modes
     if (e.metaKey || e.ctrlKey) {
-      // Command/Strg + Klick: Einzelne Auswahl hinzufügen/entfernen
+      // Toggle single selection
       if (selectedKMLs.includes(layerInfo)) {
         selectedKMLs = selectedKMLs.filter(selected => selected !== layerInfo);
         kmlItem.classList.remove('selected');
@@ -75,7 +99,7 @@ function createKMLListItem(file, layerInfo, kmlItems, layers, map) {
         kmlItem.classList.add('selected');
       }
     } else if (e.shiftKey) {
-      // Shift + Klick: Bereichsauswahl basierend auf der sichtbaren Reihenfolge
+      // Range selection
       const visibleItems = Array.from(kmlItems.children);
       const startIndex = visibleItems.findIndex(item => selectedKMLs.includes(layers.find(layer => layer.name === item.getAttribute('data-name'))));
       const endIndex = visibleItems.indexOf(kmlItem);
@@ -94,7 +118,7 @@ function createKMLListItem(file, layerInfo, kmlItems, layers, map) {
         });
       }
     } else {
-      // Einfacher Klick: Einzelauswahl
+      // Single selection
       selectedKMLs.forEach(selected => {
         const item = kmlItems.querySelector(`[data-name="${selected.name}"]`);
         if (item) item.classList.remove('selected');
@@ -103,11 +127,10 @@ function createKMLListItem(file, layerInfo, kmlItems, layers, map) {
       kmlItem.classList.add('selected');
     }
 
-    // Aktualisiere die Farbe der selektierten KMLs
     updateSelectedKMLs();
   });
 
-  // Event-Listener für das Kontextmenü (Rechtsklick)
+  // Add context menu handler
   kmlItem.addEventListener('contextmenu', (e) => {
     e.preventDefault();
     createContextMenu(e, layerInfo, map, layers);
@@ -118,6 +141,10 @@ function createKMLListItem(file, layerInfo, kmlItems, layers, map) {
   sortKMLList(kmlItems);
 }
 
+/**
+ * Sorts the KML list alphabetically
+ * @param {HTMLElement} kmlItems - Container for KML list items
+ */
 function sortKMLList(kmlItems) {
   const items = Array.from(kmlItems.children);
   items.sort((a, b) => {
@@ -130,25 +157,9 @@ function sortKMLList(kmlItems) {
   items.forEach(item => kmlItems.appendChild(item));
 }
 
-// Event-Listener für die Farbkästchen
-document.addEventListener('DOMContentLoaded', () => {
-  const colorBoxes = document.querySelectorAll('.color-box');
-  colorBoxes.forEach(colorBox => {
-    colorBox.addEventListener('click', () => {
-      const selectedColor = colorBox.getAttribute('data-color');
-      selectedKMLs.forEach(layerInfo => {
-        layerInfo.mainLayer.setStyle({ color: selectedColor });
-        layerInfo.color = selectedColor; // Aktualisiere die gespeicherte Farbe
-        // Aktualisiere den Farbstrich
-        const kmlItem = document.querySelector(`[data-name="${layerInfo.name}"]`);
-        if (kmlItem) {
-          kmlItem.querySelector('.color-stripe').style.backgroundColor = selectedColor;
-        }
-      });
-    });
-  });
-});
-
+/**
+ * Updates the visual state of selected KMLs
+ */
 function updateSelectedKMLs() {
   const kmlItems = document.getElementById('kml-items');
   kmlItems.querySelectorAll('.kml-item').forEach(item => {
@@ -157,3 +168,21 @@ function updateSelectedKMLs() {
     item.classList.toggle('selected', isSelected);
   });
 }
+
+// Initialize color picker functionality
+document.addEventListener('DOMContentLoaded', () => {
+  const colorBoxes = document.querySelectorAll('.color-box');
+  colorBoxes.forEach(colorBox => {
+    colorBox.addEventListener('click', () => {
+      const selectedColor = colorBox.getAttribute('data-color');
+      selectedKMLs.forEach(layerInfo => {
+        layerInfo.mainLayer.setStyle({ color: selectedColor });
+        layerInfo.color = selectedColor;
+        const kmlItem = document.querySelector(`[data-name="${layerInfo.name}"]`);
+        if (kmlItem) {
+          kmlItem.querySelector('.color-stripe').style.backgroundColor = selectedColor;
+        }
+      });
+    });
+  });
+});
