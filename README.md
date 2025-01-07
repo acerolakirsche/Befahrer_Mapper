@@ -3,7 +3,9 @@
 
 ## Vorab-Prompt:
     Vorabinformationen für Dich:
-    Bitte in Deinen Antworten immer vollständigen Code schicken, niemals nur Snippets.
+    Bitte in Deinen Antworten immer vollständigen Code generieren, niemals nur Snippets.
+		Bitte den Code immer ausführlich mit englischen Kommentaren versehen, damit er gut lesbar für Anfänger ist.
+		Bitte Kommentare im Code gegebenenfalls aktualisieren.
     Das Projekt liegt auf dem Webspace von STRATO, und man kann dort mit php auch Serverfunktionalität nutzen.
     Niemals Vite nutzen.
     Niemals hier in der Entwicklungsumgebung einen WebContainer starten.
