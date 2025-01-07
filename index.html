@@ -9,13 +9,12 @@
       - The map container
       - KML file list and controls
       - Color picker for KML styling
-      - Folder creation form
       - All necessary script and style imports
     -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Leaflet Map with Select All Checkbox</title>
-    
+
     <!-- External CSS Imports -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -24,17 +23,19 @@
   <body>
     <!-- Main map container -->
     <div id="map"></div>
-    
+
+    <!-- Project display at the top center -->
+    <div id="selected-project-display"></div>
+
     <!-- Side panel for KML controls -->
     <div id="kml-list">
       <h3>KML Files</h3>
-      
-      <!-- Folder creation form -->
-      <form id="folder-form">
-        <input type="text" name="folderName" id="folder-name" placeholder="Enter folder name" required>
-        <button type="submit" id="create-folder-btn">Create Folder</button>
-      </form>
-      
+
+      <!-- Project selection dropdown -->
+      <select id="project-selector">
+        <option value="">Select Project</option>
+      </select>
+
       <!-- Color picker for KML styling -->
       <div id="color-picker">
         <div class="color-box" style="background-color: #ff0000;" data-color="#ff0000"></div>
@@ -46,46 +47,20 @@
         <div class="color-box" style="background-color: #ff8000;" data-color="#ff8000"></div>
         <div class="color-box" style="background-color: #8000ff;" data-color="#8000ff"></div>
       </div>
-      
+
       <!-- Container for KML file list items -->
       <div id="kml-items"></div>
     </div>
-    
+
     <!-- External JavaScript Imports -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/@mapbox/togeojson@0.16.0/togeojson.js"></script>
-    
+
     <!-- Application Scripts -->
     <script src="kmlProcessor.js"></script>
     <script src="uiUtils.js"></script>
     <script src="messageUtils.js"></script>
     <script src="contextMenu.js"></script>
     <script src="main.js"></script>
-    
-    <!-- Folder creation form handler -->
-    <script>
-      document.getElementById('folder-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // Create FormData object from the form
-        const formData = new FormData(this);
-        
-        // Send POST request to createFolder.php
-        fetch('createFolder.php', {
-          method: 'POST',
-          body: formData
-        })
-        .then(response => response.text())
-        .then(message => {
-          // Show success/error message with appropriate color
-          const color = message.includes('successfully') ? '#4CAF50' : '#ffa500';
-          showTempMessage(message, color);
-        })
-        .catch(error => {
-          // Show error message if request fails
-          showTempMessage('Error communicating with server', '#ff0000');
-        });
-      });
-    </script>
   </body>
 </html>

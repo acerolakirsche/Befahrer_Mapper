@@ -38,7 +38,7 @@ dropArea.addEventListener('drop', (e) => {
 
   // Get dropped files
   const files = e.dataTransfer.files;
-  
+
   // Process KML files and get results
   const { ignoredFiles, addedFiles } = processKMLFiles(files, map, kmlItems, layers);
 
@@ -62,3 +62,26 @@ dropArea.addEventListener('drop', (e) => {
 // Global variables for KML layers and list items
 const layers = []; // Stores information about all KML layers
 const kmlItems = document.getElementById('kml-items'); // Container for KML list items
+const projectSelector = document.getElementById('project-selector');
+const selectedProjectDisplay = document.getElementById('selected-project-display');
+
+// Fetch and populate the project dropdown
+fetch('getProjects.php')
+  .then(response => response.json())
+  .then(projects => {
+    projects.forEach(project => {
+      const option = document.createElement('option');
+      option.value = project;
+      option.textContent = project;
+      projectSelector.appendChild(option);
+    });
+  })
+  .catch(error => {
+    console.error('Error fetching projects:', error);
+  });
+
+// Add event listener to the project selector
+projectSelector.addEventListener('change', function() {
+  const selectedProject = this.value;
+  selectedProjectDisplay.textContent = selectedProject;
+});
