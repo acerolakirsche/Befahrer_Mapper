@@ -4,39 +4,52 @@
     <!--
       index.html
       ==========
-      This is the main HTML file for the KML Mapper application.
-      It includes:
-      - The map container
-      - KML file list and controls
-      - Color picker for KML styling
-      - All necessary script and style imports
+      Hauptseite des Befahrer Mappers
+      
+      Diese HTML-Datei ist der zentrale Einstiegspunkt der Anwendung.
+      Sie definiert die grundlegende Struktur und lädt alle notwendigen
+      Ressourcen.
+
+      Hauptkomponenten:
+      - Kartencontainer für die OpenStreetMap-Darstellung
+      - Seitenleiste für KML-Verwaltung und Projektauswahl
+      - Farbwähler für KML-Styling
+      - Einbindung aller Skripte und Stylesheets
+
+      Technische Details:
+      - Verwendet Leaflet.js für Kartenfunktionen
+      - Font Awesome für Icons
+      - Eigene CSS- und JavaScript-Dateien für Anwendungslogik
     -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Leaflet Map with Select All Checkbox</title>
+    <title>Befahrer Mapper</title>
 
-    <!-- External CSS Imports -->
+    <!-- Externe CSS-Bibliotheken -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <!-- Eigenes Stylesheet -->
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <!-- Main map container -->
+    <!-- Hauptcontainer für die Karte -->
     <div id="map"></div>
 
-    <!-- Project display at the top center -->
+    <!-- Anzeige des aktuellen Projekts -->
     <div id="selected-project-display"></div>
 
-    <!-- Side panel for KML controls -->
+    <!-- Seitenleiste für KML-Verwaltung -->
     <div id="kml-list">
-      <h3>KML Files</h3>
+      <h3>KML-Dateien</h3>
 
-      <!-- Project selection dropdown -->
+      <!-- Projektauswahl-Dropdown -->
       <select id="project-selector">
-        <option value="">Select Project</option>
+        <option value="">Projekt auswählen</option>
       </select>
 
-      <!-- Color picker for KML styling -->
+      <!-- Farbwähler für KML-Styling 
+           Ermöglicht schnelles Umfärben von KML-Linien
+           Farben sind vorausgewählt für häufige Anwendungsfälle -->
       <div id="color-picker">
         <div class="color-box" style="background-color: #ff0000;" data-color="#ff0000"></div>
         <div class="color-box" style="background-color: #00ff00;" data-color="#00ff00"></div>
@@ -48,19 +61,24 @@
         <div class="color-box" style="background-color: #8000ff;" data-color="#8000ff"></div>
       </div>
 
-      <!-- Container for KML file list items -->
+      <!-- Container für KML-Listeneinträge 
+           Hier werden alle geladenen KML-Dateien angezeigt
+           Unterstützt Drag & Drop, Mehrfachauswahl und Kontextmenü -->
       <div id="kml-items"></div>
     </div>
 
-    <!-- External JavaScript Imports -->
+    <!-- Externe JavaScript-Bibliotheken -->
+    <!-- Leaflet.js für interaktive Kartenfunktionen -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- toGeoJSON für KML-Konvertierung -->
     <script src="https://unpkg.com/@mapbox/togeojson@0.16.0/togeojson.js"></script>
 
-    <!-- Application Scripts -->
-    <script src="kmlProcessor.js"></script>
-    <script src="uiUtils.js"></script>
-    <script src="messageUtils.js"></script>
-    <script src="contextMenu.js"></script>
-    <script src="main.js"></script>
+    <!-- Anwendungsskripte -->
+    <!-- Die Reihenfolge der Skripte ist wichtig für die Abhängigkeiten -->
+    <script src="kmlProcessor.js"></script>  <!-- KML-Verarbeitung -->
+    <script src="uiUtils.js"></script>       <!-- UI-Funktionen -->
+    <script src="messageUtils.js"></script>  <!-- Nachrichtensystem -->
+    <script src="contextMenu.js"></script>   <!-- Kontextmenü -->
+    <script src="main.js"></script>          <!-- Hauptanwendung -->
   </body>
 </html>

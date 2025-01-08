@@ -1,41 +1,62 @@
 /**
  * styles.css
  * ==========
- * This file contains all styles for the Leaflet map application, including:
- * - Basic layout styles for the map and KML list
- * - Styles for KML list items and their interactions
- * - Color picker and checkbox styles
- * - Context menu styles and hover effects
- * - Fonts and text formatting
- * - Responsive design elements
- * - Animations and transitions for user interactions
+ * Zentrale Styling-Datei für den Befahrer Mapper
+ * 
+ * Diese Datei definiert das gesamte visuelle Erscheinungsbild der Anwendung.
+ * Sie ist in logische Abschnitte unterteilt, die jeweils unterschiedliche
+ * Aspekte der Benutzeroberfläche steuern.
+ * 
+ * Hauptbereiche:
+ * 1. Grundlegendes Layout (Karte und Container)
+ * 2. KML-Listendarstellung und Interaktionen
+ * 3. Projekt-Auswahl und Navigation
+ * 4. Farbauswahl und visuelle Rückmeldungen
+ * 5. Kontextmenü und spezielle Effekte
+ * 
+ * Designprinzipien:
+ * - Klare visuelle Hierarchie
+ * - Konsistente Abstände und Farben
+ * - Responsive Layouts für verschiedene Bildschirmgrößen
+ * - Deutliche Nutzer-Feedback-Effekte
  */
 
-/* Basic reset and map container */
+/* ============================
+   Grundlegendes Layout
+   ============================ */
+
+/* Basis-Reset für konsistentes Erscheinungsbild */
 body {
-  margin: 0; /* Remove default body margin */
+  margin: 0; /* Entfernt Standard-Außenabstand */
 }
 
+/* Kartenbehälter - Hauptelement der Anwendung */
 #map {
-  height: 100vh; /* Full viewport height */
+  height: 100vh; /* Volle Bildschirmhöhe */
 }
 
-/* Style for the project display */
+/* Projekt-Anzeige im Kopfbereich
+   Zeigt den aktuell ausgewählten Projektordner an */
 #selected-project-display {
   position: fixed;
   top: 10px;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%); /* Zentriert horizontal */
   padding: 10px 20px;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 255, 255, 0.8); /* Halbtransparenter Hintergrund */
   border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Subtiler Schatten */
+  z-index: 1000; /* Über der Karte */
   font-size: 1.2em;
   font-weight: bold;
 }
 
-/* KML list container */
+/* ============================
+   KML-Listendarstellung
+   ============================ */
+
+/* Container für die KML-Liste
+   Positioniert am rechten Bildschirmrand */
 #kml-list {
   position: absolute;
   top: 10px;
@@ -44,12 +65,13 @@ body {
   padding: 10px;
   z-index: 1000;
   box-shadow: 0 0 10px rgba(0,0,0,0.2);
-  max-height: 90vh;
+  max-height: 90vh; /* Maximale Höhe mit Scrolling */
   overflow-y: auto;
   width: 345px;
 }
 
-/* Project selector dropdown */
+/* Projekt-Auswahlmenü
+   Dropdown für verschiedene Befahrungsprojekte */
 #project-selector {
   width: 100%;
   padding: 8px;
@@ -60,7 +82,11 @@ body {
   font-size: 1em;
 }
 
-/* Folder creation form styles */
+/* ============================
+   Ordner-Verwaltung
+   ============================ */
+
+/* Eingabefeld für neue Ordnernamen */
 #folder-name {
   width: 100%;
   padding: 8px;
@@ -70,22 +96,29 @@ body {
   box-sizing: border-box;
 }
 
+/* Button zum Erstellen neuer Ordner */
 #create-folder-btn {
   width: 100%;
   padding: 8px;
   margin-bottom: 10px;
-  background-color: #0078d4;
+  background-color: #0078d4; /* Microsoft Blau */
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
 }
 
+/* Hover-Effekt für den Erstellen-Button */
 #create-folder-btn:hover {
-  background-color: #005ba1; /* Darker blue on hover */
+  background-color: #005ba1; /* Dunkleres Blau */
 }
 
-/* KML list item styles */
+/* ============================
+   KML-Listeneinträge
+   ============================ */
+
+/* Einzelner KML-Listeneintrag
+   Flexbox für optimale Ausrichtung der Elemente */
 .kml-item {
   position: relative;
   margin: 5px 0;
@@ -95,10 +128,11 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  user-select: none; /* Prevent text selection */
+  user-select: none; /* Verhindert Textauswahl */
 }
 
-/* Color stripe indicating KML color */
+/* Farbstreifen zur visuellen Identifikation
+   Zeigt die aktuelle Farbe der KML an */
 .color-stripe {
   position: absolute;
   left: 0;
@@ -107,33 +141,54 @@ body {
   height: 100%;
 }
 
-/* Hover and selection states */
+/* Interaktive Zustände für Listeneinträge */
 .kml-item:hover {
-  background: #f0f0f0;
+  background: #f0f0f0; /* Heller Hintergrund beim Hover */
 }
 
 .kml-item.selected {
-  background-color: #e3f2fd; /* Light blue for selected items */
+  background-color: #e3f2fd; /* Helles Blau für Auswahl */
 }
 
-/* Delete icon styles */
+/* ============================
+   Icons und Buttons
+   ============================ */
+
+/* Lösch-Icon für KML-Einträge */
 .delete-icon {
-  color: #ff4444;
+  color: #ff4444; /* Warnendes Rot */
   cursor: pointer;
   margin-left: 10px;
 }
 
 .delete-icon:hover {
-  color: #cc0000; /* Darker red on hover */
+  color: #cc0000; /* Dunkleres Rot beim Hover */
 }
 
-/* Color picker styles */
+/* Sichtbarkeits-Icons (Auge) */
+.fa-eye,
+.fa-eye-slash {
+  color: #0078d4; /* Microsoft Blau */
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+.fa-eye-slash {
+  color: #ccc; /* Grau für ausgeblendete Elemente */
+}
+
+/* ============================
+   Farbauswahl
+   ============================ */
+
+/* Container für Farbauswahlboxen */
 #color-picker {
   display: flex;
   gap: 5px;
   margin-bottom: 10px;
 }
 
+/* Einzelne Farbauswahlbox */
 .color-box {
   width: 20px;
   height: 20px;
@@ -142,31 +197,40 @@ body {
 }
 
 .color-box:hover {
-  border-color: #000; /* Darker border on hover */
+  border-color: #000; /* Dunklerer Rahmen beim Hover */
 }
 
-/* Text styles */
+/* ============================
+   Textformatierung
+   ============================ */
+
+/* Allgemeiner Text in Listeneinträgen */
 .kml-item span {
   font-family: Arial, sans-serif;
   font-size: 0.7em;
   white-space: normal;
   word-wrap: break-word;
   max-width: 230px;
-  user-select: none; /* Prevent text selection */
+  user-select: none; /* Verhindert Textauswahl */
 }
 
-/* Large number display */
+/* Große Nummern-Anzeige
+   Für schnelle visuelle Identifikation */
 .kml-number {
   font-family: 'Courier New', Courier, monospace;
   font-size: 8em;
   margin-right: 4px;
   margin-left: 2px;
   font-weight: bold;
-  color: #0078d4;
-  user-select: none; /* Prevent text selection */
+  color: #0078d4; /* Microsoft Blau */
+  user-select: none;
 }
 
-/* Context menu styles */
+/* ============================
+   Kontextmenü
+   ============================ */
+
+/* Container für das Kontextmenü */
 #kml-context-menu {
   font-family: Arial, sans-serif;
   font-size: 0.8em;
@@ -177,25 +241,14 @@ body {
   min-width: 180px;
 }
 
+/* Menüeinträge im Kontextmenü */
 #kml-context-menu div {
   padding: 8px 12px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease; /* Sanfter Übergang */
   color: #333;
 }
 
 #kml-context-menu div:hover {
-  background-color: #f5f5f5; /* Light gray on hover */
-}
-
-/* Eye icon styles */
-.fa-eye,
-.fa-eye-slash {
-  color: #0078d4;
-  cursor: pointer;
-  margin-right: 5px;
-}
-
-.fa-eye-slash {
-  color: #ccc; /* Gray for hidden items */
+  background-color: #f5f5f5; /* Heller Hintergrund beim Hover */
 }

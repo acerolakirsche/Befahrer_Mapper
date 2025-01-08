@@ -1,44 +1,58 @@
 /**
  * kmlProcessor.js
- * ===============
- * This script handles the processing of KML files, including:
- * - Reading and parsing KML files
- * - Converting KML to GeoJSON
- * - Creating map layers for visualization
- * - Managing duplicate file detection
- * - Extracting numbers from filenames
+ * ==============
+ * Dieses Modul ist verantwortlich für die Verarbeitung von KML-Dateien.
+ * 
+ * Hauptfunktionen:
+ * - Einlesen und Parsen von KML-Dateien
+ * - Konvertierung von KML zu GeoJSON
+ * - Erstellung von Kartenebenen zur Visualisierung
+ * - Erkennung von Duplikaten
+ * - Extraktion von Nummern aus Dateinamen
+ * 
+ * Technische Details:
+ * - Verwendet FileReader API für lokale Dateien
+ * - Nutzt fetch API für Server-Dateien
+ * - Konvertiert mit toGeoJSON Bibliothek
+ * - Erstellt Leaflet GeoJSON Layer
  */
 
-// Define line weights for visualization
-const mainLineWeight = 3; // Weight of the main KML line
-const shadowLineWeight = mainLineWeight * 2; // Weight of the shadow line
+// Linienstärken für die Visualisierung
+const mainLineWeight = 3;  // Stärke der Haupt-KML-Linie
+const shadowLineWeight = mainLineWeight * 2;  // Stärke der Schatten-Linie
 
 /**
- * Processes multiple KML files
- * @param {FileList|Array} files - List of KML files to process
- * @param {L.Map} map - Leaflet map instance
- * @param {HTMLElement} kmlItems - Container for KML list items
- * @param {Array} layers - Array to store layer information
- * @returns {Object} - Object containing lists of ignored and added files
+ * Verarbeitet mehrere KML-Dateien
+ * 
+ * @param {FileList|Array} files - Liste der zu verarbeitenden KML-Dateien
+ * @param {L.Map} map - Leaflet-Karteninstanz
+ * @param {HTMLElement} kmlItems - Container für KML-Listeneinträge
+ * @param {Array} layers - Array zur Speicherung der Layer-Informationen
+ * @returns {Object} - Objekt mit Listen der ignorierten und hinzugefügten Dateien
+ * 
+ * Ablauf:
+ * 1. Prüft jede Datei auf gültiges KML-Format
+ * 2. Erkennt Duplikate
+ * 3. Verarbeitet gültige, neue KML-Dateien
  */
 function processKMLFiles(files, map, kmlItems, layers) {
-  const ignoredFiles = []; // Files that were ignored (duplicates)
-  const addedFiles = []; // Files that were successfully added
+  const ignoredFiles = []; // Ignorierte Dateien (Duplikate)
+  const addedFiles = []; // Erfolgreich hinzugefügte Dateien
 
-  // Process each file in the list
+  // Jede Datei in der Liste verarbeiten
   for (const file of files) {
     if (file.name.endsWith('.kml')) {
-      // Check if file is a duplicate
+      // Prüfen ob Datei ein Duplikat ist
       const isDuplicate = layers.some(layerInfo => layerInfo.name === file.name);
       if (isDuplicate) {
         ignoredFiles.push(file.name);
       } else {
-        // Process valid, non-duplicate KML file
+        // Gültige, nicht-doppelte KML-Datei verarbeiten
         processKMLFile(file, map, kmlItems, layers);
         addedFiles.push(file.name);
       }
     } else {
-      alert('Please only upload KML files.');
+      showTempMessage(NACHRICHTEN.WARNUNG.UNGUELTIGE_DATEI, '#ffa500');
     }
   }
 
@@ -46,120 +60,128 @@ function processKMLFiles(files, map, kmlItems, layers) {
 }
 
 /**
- * Processes a single KML file
- * @param {File} file - The KML file to process
- * @param {L.Map} map - Leaflet map instance
- * @param {HTMLElement} kmlItems - Container for KML list items
- * @param {Array} layers - Array to store layer information
+ * Verarbeitet eine einzelne KML-Datei
+ * 
+ * @param {File} file - Die zu verarbeitende KML-Datei
+ * @param {L.Map} map - Leaflet-Karteninstanz
+ * @param {HTMLElement} kmlItems - Container für KML-Listeneinträge
+ * @param {Array} layers - Array zur Speicherung der Layer-Informationen
+ * 
+ * Ablauf:
+ * 1. Liest die KML-Datei ein
+ * 2. Konvertiert zu GeoJSON
+ * 3. Erstellt Schatten- und Haupt-Layer
+ * 4. Fügt Layer zur Karte hinzu
+ * 5. Erstellt Listeneintrag
  */
 function processKMLFile(file, map, kmlItems, layers) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     
-    // Handle file reading completion
+    // Handler für abgeschlossenes Datei-Einlesen
     reader.onload = (e) => {
       const kml = e.target.result;
       
-      // Parse KML content
+      // KML-Inhalt parsen
       const parser = new DOMParser();
       const kmlDoc = parser.parseFromString(kml, 'text/xml');
       
-      // Convert KML to GeoJSON
+      // KML zu GeoJSON konvertieren
       const geojson = toGeoJSON.kml(kmlDoc);
 
-      // Create shadow layer (black background line)
+      // Schatten-Layer erstellen (schwarze Hintergrundlinie)
       const shadowLayer = L.geoJSON(geojson, {
         style: {
           color: '#000000',
           weight: shadowLineWeight,
           opacity: 0.5
         },
-        pointToLayer: () => null // Skip point features
+        pointToLayer: () => null // Punktfeatures überspringen
       }).addTo(map);
 
-      // Create main visualization layer
+      // Haupt-Visualisierungslayer erstellen
       const mainLayer = L.geoJSON(geojson, {
         style: {
-          color: '#ff0000', // Default red color
+          color: '#ff0000', // Standard: Rot
           weight: mainLineWeight
         },
         onEachFeature: (feature, layer) => {
-          // Add popup if feature has a name
+          // Popup hinzufügen, wenn Feature einen Namen hat
           if (feature.properties && feature.properties.name) {
             layer.bindPopup(feature.properties.name);
           }
         },
-        pointToLayer: () => null // Skip point features
+        pointToLayer: () => null // Punktfeatures überspringen
       }).addTo(map);
 
-      // Store layer information
+      // Layer-Informationen speichern
       const layerInfo = {
         name: file.name,
         mainLayer,
         shadowLayer,
         checkbox: null,
-        color: '#ff0000' // Default color
+        color: '#ff0000' // Standardfarbe
       };
       layers.push(layerInfo);
 
-      // Create list item for the KML file
+      // Listeneintrag für die KML-Datei erstellen
       createKMLListItem(file, layerInfo, kmlItems, layers, map);
       resolve();
     };
     
-    // Start reading the file
+    // Datei einlesen starten
     if (file.size > 0) {
       reader.readAsText(file);
     } else {
-      // Handle server-side files
+      // Server-seitige Dateien verarbeiten
       const fetchPath = `Befahrungsprojekte/${currentProject}/KML-Files/${file.name}`;
-      console.log('Attempting to fetch KML file from:', fetchPath);
       
       fetch(fetchPath)
         .then(response => response.text())
         .then(kml => {
-          // Parse KML content
+          // KML-Inhalt parsen
           const parser = new DOMParser();
           const kmlDoc = parser.parseFromString(kml, 'text/xml');
           
-          // Convert KML to GeoJSON
+          // KML zu GeoJSON konvertieren
           const geojson = toGeoJSON.kml(kmlDoc);
 
-          // Create shadow layer (black background line)
+          // Schatten-Layer erstellen
           const shadowLayer = L.geoJSON(geojson, {
             style: {
               color: '#000000',
               weight: shadowLineWeight,
               opacity: 0.5
             },
-            pointToLayer: () => null // Skip point features
+            pointToLayer: () => null
           }).addTo(map);
 
-          // Create main visualization layer
+          // Haupt-Layer erstellen
           const mainLayer = L.geoJSON(geojson, {
             style: {
-              color: '#ff0000', // Default red color
+              color: '#ff0000',
               weight: mainLineWeight,
               opacity: 0.8
             },
-            pointToLayer: () => null // Skip point features
+            pointToLayer: () => null
           }).addTo(map);
 
-          // Store layer information
+          // Layer-Informationen speichern
           const layerInfo = {
             name: file.name,
             mainLayer: mainLayer,
             shadowLayer: shadowLayer,
-            color: '#ff0000' // Default color
+            color: '#ff0000'
           };
           layers.push(layerInfo);
 
-          // Create list item for the KML file
+          // Listeneintrag erstellen
           createKMLListItem(file, layerInfo, kmlItems, layers, map);
           resolve();
         })
         .catch(error => {
-          console.error('Error loading KML file:', error);
+          console.error('Fehler beim Laden der KML-Datei:', error);
+          showTempMessage(NACHRICHTEN.FEHLER.LADEN_FEHLGESCHLAGEN, '#ff4444');
           reject(error);
         });
     }
@@ -167,17 +189,21 @@ function processKMLFile(file, map, kmlItems, layers) {
 }
 
 /**
- * Extracts a two-digit number from the filename
- * @param {string} filename - The KML filename
- * @returns {string} - Extracted two-digit number
+ * Extrahiert eine zweistellige Nummer aus dem Dateinamen
+ * 
+ * @param {string} filename - Der KML-Dateiname
+ * @returns {string} - Extrahierte zweistellige Nummer
+ * 
+ * Format-Beispiel:
+ * Aus "Befahrung_2023_01_KML.kml" wird "01" extrahiert
  */
 function extractNumberFromFilename(filename) {
-  // Remove file extension
+  // Dateiendung entfernen
   const nameWithoutExtension = filename.replace('.kml', '');
   
-  // Calculate start position (13 characters from the end)
+  // Startposition berechnen (13 Zeichen vom Ende)
   const startPos = nameWithoutExtension.length - 13;
   
-  // Extract two-digit number
+  // Zweistellige Nummer extrahieren
   return nameWithoutExtension.substring(startPos, startPos + 2);
 }

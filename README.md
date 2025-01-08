@@ -1,55 +1,72 @@
 # Befahrer Mapper
-# Leaflet Map with KML Import and Management
 
-## Project Description
-This project is a web-based application that allows users to import KML files (Keyhole Markup Language) via drag & drop onto an interactive map. The application provides a variety of features for managing and visualizing KML data, including color selection, zoom functions, and a clear display of imported files.
+## Übersicht
+Der Befahrer Mapper ist eine spezialisierte Webanwendung für die Planung und Koordination von Messfahrten im Stil von Google Street View. Die App wurde entwickelt, um Befahrungsteams eine einfache, intuitive Alternative zu komplexen GIS-Systemen wie QGis zu bieten.
 
-## Features
-### KML File Import
-- **Drag & Drop**: KML files can be dragged and dropped onto the map.
-- **Duplicate Protection**: Duplicate KML files are ignored, and the user is informed.
-- **Messages**: Successfully added and ignored files are displayed in clear messages.
+### Hauptmerkmale
+- **Browserbasiert & Überall verfügbar**: Läuft auf STRATO Webspace und ist von überall ohne Installation zugänglich
+- **Einfache Bedienung**: Optimiert für nicht-technische Nutzer
+- **Drag & Drop KML-Import**: Schnelles Hinzufügen von Befahrungsabschnitten
+- **Visuelle Hervorhebung**: 
+  - Doppelte Linienführung für bessere Sichtbarkeit
+  - Farbkodierung für verschiedene Teams/Abschnitte
+  - Intelligente Selektierung mit visueller Hervorhebung
 
-### Visualization
-- **Lines and Shadow Lines**: Each KML file is displayed as a line on the map, with a black shadow line underneath for better visibility.
-- **Color Selection**: 8 predefined colors are available to color the lines of selected KML files.
-- **Zoom Functions**:
+## Funktionsweise
 
-### User Interface
-- **Number from Filename**: A two-digit number is extracted from the filename and displayed prominently.
-- **Styles**: The font of KML labels is sans-serif and small, while the number is large and easily visible.
+### Für Befahrungsteams
+1. **Zugriff**: Öffnen Sie die Webseite in einem beliebigen Browser
+2. **Befahrungsplanung**: 
+   - KML-Dateien per Drag & Drop auf die Karte ziehen
+   - Abschnitte farblich markieren
+   - Mehrere Abschnitte gleichzeitig auswählen und vergleichen
+3. **Koordination**: Einfacher Überblick über alle geplanten Befahrungen
 
-### Error Handling and Optimizations
-- **Error Messages**: Invalid file types are rejected, and the user is informed.
-- **Performance**: The application is optimized for processing many KML files.
+### Technische Features
+- **Intelligente KML-Verwaltung**:
+  - Automatische Erkennung von Duplikaten
+  - Extraktion und prominente Anzeige von Abschnittsnummern
+  - Schwarze Schatten-Layer für bessere Sichtbarkeit
+- **Interaktive Kartenansicht**:
+  - Zoom-Funktionen
+  - Multi-Select von Abschnitten
+  - Hover-Effekte zur schnellen Identifizierung
+- **Benutzerfreundliche Oberfläche**:
+  - Klare, übersichtliche Darstellung
+  - Sofortiges visuelles Feedback
+  - Intuitive Bedienelemente
 
-## Problems Solved
-- **Duplicate Protection**: Duplicate KML files are ignored, and the user is informed.
-- **Messages**: Messages for ignored and successfully added files no longer overlap and are clearly designed.
+## Geplante Erweiterungen
 
-## Possible Extensions
-- **Export Function**: Ability to export the current map view as an image or PDF.
-- **Advanced Error Handling**: Better error messages for invalid or corrupted KML files.
-- **Database Integration**: Storage of imported KML files in a database for persistent use.
-- **User Accounts**: Introduction of user accounts to save individual maps and settings.
-- **Layer Management**: Ability to group and manage layers to improve clarity.
+### Kurzfristig
+- **Benutzerkonten**: 
+  - Persönliche Ansichten speichern
+  - Teamspezifische Einstellungen
+- **Erweiterte KML-Informationen**:
+  - Anzeige der Streckenlänge in Kilometern
+  - Zeitschätzungen für Befahrungen
 
-## Technologies
-- **Leaflet.js**: For the interactive map.
-- **HTML/CSS/JavaScript**: For the user interface and logic.
-- **toGeoJSON**: For converting KML to GeoJSON.
-- **PHP**: For server-side functionality like loading projects and KML files.
+### Mittelfristig
+- **Erweiterte Kartenansichten**:
+  - Satellitenbilder für Geländeeinschätzung
+  - Wetterdaten-Integration
+  - Wetter-Satellitenbilder-Overlay
 
-## Installation and Usage
-1. Clone the repository or download the files.
-2. Open the `index.html` in a modern web browser.
-3. Drag and drop KML files onto the map to import them.
+### Langfristig
+- **Team-Koordination**:
+  - Echtzeit-Kollaboration
+  - Automatische Routenoptimierung
+  - Fortschrittsverfolgung
 
-## License
-This project is licensed under the MIT License. See the `LICENSE` file for more information.
+## Technischer Stack
+- **Frontend**: HTML5, CSS3, JavaScript
+- **Kartendarstellung**: Leaflet.js
+- **Datenverarbeitung**: toGeoJSON
+- **Backend**: PHP
+- **Hosting**: STRATO Webspace
 
-## Contact
-For questions or suggestions, please contact the project maintainer.
+## Mitwirkung
+Feedback und Verbesserungsvorschläge sind willkommen! Die Anwendung wird kontinuierlich weiterentwickelt, um den Bedürfnissen der Befahrungsteams gerecht zu werden.
 
-## Acknowledgments
-Thanks to everyone who contributed to this project, especially the developers of Leaflet.js and toGeoJSON.
+## Lizenz
+Dieses Projekt steht unter der MIT-Lizenz.

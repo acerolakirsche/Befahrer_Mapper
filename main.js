@@ -1,79 +1,99 @@
 /**
  * main.js
  * =======
- * This is the main script that initializes and controls the application.
- * It handles:
- * - Map initialization
- * - Drag and drop functionality for KML files
- * - Layer management
- * - Global variables and state
+ * Hauptskript der Befahrer Mapper Anwendung
+ * 
+ * Dieses Skript ist der zentrale Einstiegspunkt der Anwendung und
+ * steuert die grundlegenden Funktionen:
+ * 
+ * Hauptfunktionen:
+ * - Initialisierung der Karte mit Deutschland-Fokus
+ * - Drag & Drop Funktionalität für KML-Dateien
+ * - Verwaltung der Kartenlayer
+ * - Projektverwaltung und -auswahl
+ * 
+ * Technische Details:
+ * - Nutzt Leaflet.js für die Kartendarstellung
+ * - Verwendet fetch API für Server-Kommunikation
+ * - Verwaltet globale Zustände für Layer und Projekte
  */
 
-// Initialize the map with focus on Germany
+// Karte initialisieren mit Fokus auf Deutschland
 const map = L.map('map').setView([51.1657, 10.4515], 6);
 
-// Add OpenStreetMap tile layer
+// OpenStreetMap Kartenlayer hinzufügen
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-// Set up drag and drop handlers for the map
+// Drag & Drop Bereich für die Karte einrichten
 const dropArea = document.getElementById('map');
 
-// Handle drag over event
+// Drag-Over Event behandeln
 dropArea.addEventListener('dragover', (e) => {
   e.preventDefault();
-  dropArea.style.backgroundColor = '#f0f0f0'; // Visual feedback
+  dropArea.style.backgroundColor = '#f0f0f0'; // Visuelles Feedback
 });
 
-// Handle drag leave event
+// Drag-Leave Event behandeln
 dropArea.addEventListener('dragleave', () => {
-  dropArea.style.backgroundColor = ''; // Reset background
+  dropArea.style.backgroundColor = ''; // Hintergrund zurücksetzen
 });
 
-// Handle drop event
+// Drop Event behandeln
 dropArea.addEventListener('drop', (e) => {
   e.preventDefault();
-  dropArea.style.backgroundColor = ''; // Reset background
+  dropArea.style.backgroundColor = ''; // Hintergrund zurücksetzen
 
-  // Get dropped files
+  // Abgelegte Dateien verarbeiten
   const files = e.dataTransfer.files;
 
-  // Process KML files and get results
+  // KML-Dateien verarbeiten und Ergebnisse sammeln
   const { ignoredFiles, addedFiles } = processKMLFiles(files, map, kmlItems, layers);
 
-  // Show messages for ignored and added files
-  let ignoreMessageElement = null;
+  // Meldungen für ignorierte und hinzugefügte Dateien anzeigen
+  let warnungElement = null;
   if (ignoredFiles.length > 0) {
-    const message = `<b>Ignored (duplicates):</b>\n${ignoredFiles.join('\n')}`;
-    ignoreMessageElement = showTempMessage(message, '#ffa500'); // Orange for ignored
+    const duplikatNachricht = ignoredFiles.map(datei => 
+      NACHRICHTEN.WARNUNG.DUPLIKAT(datei)
+    ).join('\n');
+    warnungElement = showTempMessage(duplikatNachricht, '#ffa500');
   }
 
   if (addedFiles.length > 0) {
-    const message = `<b>Successfully added:</b>\n${addedFiles.join('\n')}`;
+    const erfolgNachricht = addedFiles.map(datei =>
+      NACHRICHTEN.ERFOLG.KML_HINZUGEFUEGT(datei)
+    ).join('\n');
     setTimeout(() => {
-      // Position success message below ignore message if it exists
-      const offset = ignoreMessageElement ? ignoreMessageElement.offsetHeight + 20 : 0;
-      showTempMessage(message, '#4CAF50', 5000, offset); // Green for success
+      // Erfolgsmeldung unter Warnungen positionieren
+      const versatz = warnungElement ? warnungElement.offsetHeight + 20 : 0;
+      showTempMessage(erfolgNachricht, '#4CAF50', 5000, versatz);
     }, 100);
   }
 });
 
-// Global variables for KML layers and list items
-const layers = []; // Stores information about all KML layers
-const kmlItems = document.getElementById('kml-items'); // Container for KML list items
+// Globale Variablen für KML-Layer und Listenelemente
+const layers = []; // Speichert Informationen über alle KML-Layer
+const kmlItems = document.getElementById('kml-items'); // Container für KML-Listeneinträge
 const projectSelector = document.getElementById('project-selector');
 const selectedProjectDisplay = document.getElementById('selected-project-display');
-let currentProject = null; // Track currently selected project
+let currentProject = null; // Aktuell ausgewähltes Projekt
 
 /**
- * Loads KML files from selected project folder
- * @param {string} projectName - Name of the project folder
+ * Lädt KML-Dateien aus dem ausgewählten Projektordner
+ * 
+ * @param {string} projektName - Name des Projektordners
+ * 
+ * Ablauf:
+ * 1. Prüft, ob das Projekt bereits geladen ist
+ * 2. Bereinigt bestehende Layer und Liste
+ * 3. Lädt neue KML-Dateien vom Server
+ * 4. Verarbeitet jede KML-Datei einzeln
  */
-async function loadProjectKMLs(projectName) {
-  if (projectName === currentProject) return; // Skip if same project selected
+async function loadProjectKMLs(projektName) {
+  if (projektName === currentProject) return; // Überspringen wenn gleiches Projekt
   
-  // Clear existing layers and list
+  // Bestehende Layer und Liste bereinigen
   layers.forEach(layerInfo => {
     map.removeLayer(layerInfo.mainLayer);
     map.removeLayer(layerInfo.shadowLayer);
@@ -82,30 +102,30 @@ async function loadProjectKMLs(projectName) {
   kmlItems.innerHTML = '';
   
   try {
-    // Set current project name immediately
-    currentProject = projectName;
-    selectedProjectDisplay.textContent = projectName;
+    // Projektnamen sofort setzen
+    currentProject = projektName;
+    selectedProjectDisplay.textContent = projektName;
 
-    // Debug output for the path
-    const fetchPath = `getKMLFiles.php?project=${encodeURIComponent(projectName)}`;
-    console.log('Attempting to fetch KML files list from:', fetchPath);
-    
-    // Fetch directory listing
+    // KML-Dateien vom Server abrufen
+    const fetchPath = `getKMLFiles.php?project=${encodeURIComponent(projektName)}`;
     const response = await fetch(fetchPath);
     const kmlFiles = await response.json();
     
-    // Process each KML file
+    // Jede KML-Datei verarbeiten
     for (const fileName of kmlFiles) {
       const file = { name: fileName };
       processKMLFile(file, map, kmlItems, layers);
     }
+
+    // Erfolgsmeldung anzeigen
+    showTempMessage(NACHRICHTEN.ERFOLG.PROJEKT_GELADEN(projektName), '#4CAF50');
   } catch (error) {
-    console.error('Error loading project KMLs:', error);
-    showTempMessage('Error loading project KMLs', '#ff4444');
+    console.error('Fehler beim Laden der Projekt-KMLs:', error);
+    showTempMessage(NACHRICHTEN.FEHLER.LADEN_FEHLGESCHLAGEN, '#ff4444');
   }
 }
 
-// Fetch and populate the project dropdown
+// Projekte vom Server abrufen und Dropdown befüllen
 fetch('getProjects.php')
   .then(response => response.json())
   .then(projects => {
@@ -117,10 +137,11 @@ fetch('getProjects.php')
     });
   })
   .catch(error => {
-    console.error('Error fetching projects:', error);
+    console.error('Fehler beim Abrufen der Projekte:', error);
+    showTempMessage(NACHRICHTEN.FEHLER.NETZWERK_FEHLER, '#ff4444');
   });
 
-// Add event listener to the project selector
+// Event-Listener für die Projektauswahl
 projectSelector.addEventListener('change', function() {
   const selectedProject = this.value;
   if (selectedProject) {

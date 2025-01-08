@@ -1,81 +1,105 @@
 /**
  * uiUtils.js
  * ==========
- * This script contains utility functions for managing the user interface, including:
- * - Creating and managing KML list items
- * - Handling layer selection and visibility
- * - Managing color selection for KML layers
- * - Sorting and updating the KML list
- * - Handling context menu interactions
+ * Diese Datei ist das Herzstück der Benutzeroberfläche des Befahrer Mappers.
+ * Sie steuert die gesamte Interaktion mit der KML-Liste und deren Darstellung auf der Karte.
+ * 
+ * Hauptfunktionen:
+ * - Verwaltung der KML-Listeneinträge (Erstellen, Löschen, Auswählen)
+ * - Visuelle Effekte (Hover-Effekte, Hervorhebungen)
+ * - Mehrfachauswahl von KMLs (mit Strg/Cmd oder Shift)
+ * - Farbverwaltung für KML-Schichten
+ * 
+ * Technische Details:
+ * - Verwendet Leaflet.js für Kartenoperationen
+ * - Arbeitet eng mit kmlProcessor.js zusammen
+ * - Nutzt DOM-Manipulation für UI-Updates
  */
 
-// Global variable to track selected KMLs
+// Globale Variable für ausgewählte KMLs
+// Diese Liste speichert alle aktuell selektierten KML-Einträge, damit wir sie
+// gemeinsam bearbeiten können (z.B. Farbe ändern, ausblenden)
 let selectedKMLs = [];
 
 /**
- * Creates a list item for a KML file
- * @param {File} file - The KML file
- * @param {Object} layerInfo - Information about the KML layer
- * @param {HTMLElement} kmlItems - Container for KML list items
- * @param {Array} layers - Array of all KML layers
- * @param {L.Map} map - Leaflet map instance
+ * Erstellt einen neuen Listeneintrag für eine KML-Datei
+ * 
+ * @param {File} file - Die KML-Datei, die dargestellt werden soll
+ * @param {Object} layerInfo - Informationen über die KML-Ebene (enthält mainLayer und shadowLayer)
+ * @param {HTMLElement} kmlItems - Der Container, der alle KML-Listeneinträge enthält
+ * @param {Array} layers - Array mit allen KML-Ebenen für Verwaltungszwecke
+ * @param {L.Map} map - Die Leaflet-Karteninstanz
+ * 
+ * Ablauf der Funktion:
+ * 1. Erstellt Container für den Listeneintrag
+ * 2. Fügt Farbstreifen zur visuellen Identifikation hinzu
+ * 3. Erstellt Sichtbarkeits-Toggle (Augen-Icon)
+ * 4. Extrahiert und zeigt Nummer aus Dateinamen
+ * 5. Fügt Lösch-Button hinzu
+ * 6. Implementiert Auswahllogik (Einzel-, Mehrfach-, Bereichsauswahl)
  */
 function createKMLListItem(file, layerInfo, kmlItems, layers, map) {
-  // Create container for the list item
+  // Container für den Listeneintrag erstellen
+  // Wir nutzen ein div statt li für bessere Styling-Kontrolle
   const kmlItem = document.createElement('div');
   kmlItem.className = 'kml-item';
 
-  // Create color stripe indicating layer color
+  // Farbstreifen erstellen
+  // Dieser zeigt die aktuelle Farbe der KML an und macht die Zuordnung einfacher
   const colorStripe = document.createElement('div');
   colorStripe.className = 'color-stripe';
   colorStripe.style.backgroundColor = layerInfo.color;
   kmlItem.appendChild(colorStripe);
 
-  // Create eye icon for visibility control
+  // Sichtbarkeits-Icon (Auge) erstellen
+  // Ermöglicht schnelles Ein-/Ausblenden der KML
   const eyeIcon = document.createElement('i');
   eyeIcon.className = 'fas fa-eye';
   eyeIcon.style.marginRight = '10px';
   eyeIcon.style.cursor = 'pointer';
   layerInfo.eyeIcon = eyeIcon;
 
-  // Add click handler for visibility toggle
+  // Click-Handler für Sichtbarkeits-Toggle
+  // Schaltet beide Layer (Haupt- und Schatten-Layer) gleichzeitig um
   eyeIcon.addEventListener('click', (e) => {
-    e.stopPropagation();
+    e.stopPropagation(); // Verhindert Auslösen der Listenauswahl
     const isVisible = !eyeIcon.classList.contains('fa-eye-slash');
     if (isVisible) {
-      // Hide the layer
+      // Layer ausblenden
       map.removeLayer(layerInfo.mainLayer);
       map.removeLayer(layerInfo.shadowLayer);
       eyeIcon.classList.remove('fa-eye');
       eyeIcon.classList.add('fa-eye-slash');
     } else {
-      // Show the layer
+      // Layer einblenden
       map.addLayer(layerInfo.shadowLayer);
       map.addLayer(layerInfo.mainLayer);
       eyeIcon.classList.remove('fa-eye-slash');
       eyeIcon.classList.add('fa-eye');
     }
   });
-
   kmlItem.appendChild(eyeIcon);
 
-  // Extract and display number from filename
+  // Nummer aus Dateinamen extrahieren und anzeigen
+  // Wichtig für schnelle Identifikation der Befahrungsabschnitte
   const number = extractNumberFromFilename(file.name);
   const numberElement = document.createElement('span');
   numberElement.className = 'kml-number';
   numberElement.textContent = number;
   kmlItem.appendChild(numberElement);
 
-  // Display filename
+  // Dateinamen anzeigen
   const fileName = document.createElement('span');
   fileName.textContent = file.name;
   kmlItem.appendChild(fileName);
 
-  // Add delete icon
+  // Lösch-Icon erstellen
+  // Ermöglicht das Entfernen einzelner KMLs
   const deleteIcon = document.createElement('i');
   deleteIcon.className = 'fas fa-trash delete-icon';
   deleteIcon.onclick = (e) => {
-    e.stopPropagation();
+    e.stopPropagation(); // Verhindert Auslösen der Listenauswahl
+    // Entfernt beide Layer und den Listeneintrag
     map.removeLayer(layerInfo.mainLayer);
     map.removeLayer(layerInfo.shadowLayer);
     kmlItems.removeChild(kmlItem);
@@ -84,7 +108,8 @@ function createKMLListItem(file, layerInfo, kmlItems, layers, map) {
   };
   kmlItem.appendChild(deleteIcon);
 
-  // Add hover functionality to show bounding box
+  // Hover-Effekt für KML-Hervorhebung
+  // Zeigt eine Bounding-Box um die KML auf der Karte
   let boundingBoxLayer = null;
   kmlItem.addEventListener('mouseenter', () => {
     const bounds = layerInfo.mainLayer.getBounds();
@@ -103,50 +128,94 @@ function createKMLListItem(file, layerInfo, kmlItems, layers, map) {
     }
   });
 
-  // Add click handler for selection
+  // Click-Handler für Auswahl-Funktionalität
+  // Implementiert drei Auswahlmodi:
+  // 1. Normaler Klick: Einzelauswahl
+  // 2. Strg/Cmd + Klick: Toggle-Auswahl (für Mehrfachauswahl)
+  // 3. Shift + Klick: Bereichsauswahl
   kmlItem.addEventListener('click', (e) => {
     e.stopPropagation();
 
-    // Handle different selection modes
     if (e.metaKey || e.ctrlKey) {
-      // Toggle single selection
+      // Toggle-Auswahl für Mehrfachauswahl
       if (selectedKMLs.includes(layerInfo)) {
+        // Abwählen
         selectedKMLs = selectedKMLs.filter(selected => selected !== layerInfo);
         kmlItem.classList.remove('selected');
+        layerInfo.shadowLayer.setStyle({ 
+          opacity: 0.5,
+          weight: shadowLineWeight
+        });
       } else {
+        // Hinzufügen zur Auswahl
         selectedKMLs.push(layerInfo);
         kmlItem.classList.add('selected');
+        layerInfo.shadowLayer.setStyle({ 
+          opacity: 1.0,
+          weight: shadowLineWeight * 2
+        });
       }
     } else if (e.shiftKey) {
-      // Range selection
-      const visibleItems = Array.from(kmlItems.children);
-      const startIndex = visibleItems.findIndex(item => selectedKMLs.includes(layers.find(layer => layer.name === item.getAttribute('data-name'))));
-      const endIndex = visibleItems.indexOf(kmlItem);
+      // Bereichsauswahl
+      const items = Array.from(kmlItems.children);
+      const currentIndex = items.indexOf(kmlItem);
+      const lastSelectedIndex = items.findIndex(item => 
+        selectedKMLs.includes(layers[items.indexOf(item)])
+      );
 
-      if (startIndex !== -1 && endIndex !== -1) {
-        const range = visibleItems.slice(
-          Math.min(startIndex, endIndex),
-          Math.max(startIndex, endIndex) + 1
-        );
-        range.forEach(item => {
-          const layer = layers.find(layer => layer.name === item.getAttribute('data-name'));
-          if (layer && !selectedKMLs.includes(layer)) {
-            selectedKMLs.push(layer);
+      if (lastSelectedIndex === -1) {
+        // Wenn keine vorherige Auswahl, wie Einzelauswahl behandeln
+        selectedKMLs = [layerInfo];
+        kmlItem.classList.add('selected');
+        layerInfo.shadowLayer.setStyle({ 
+          opacity: 1.0,
+          weight: shadowLineWeight * 2
+        });
+      } else {
+        // Bereich auswählen
+        const [start, end] = [lastSelectedIndex, currentIndex].sort((a, b) => a - b);
+        selectedKMLs = [];
+        items.forEach((item, index) => {
+          if (index >= start && index <= end) {
+            const itemLayer = layers[index];
+            selectedKMLs.push(itemLayer);
             item.classList.add('selected');
+            itemLayer.shadowLayer.setStyle({ 
+              opacity: 1.0,
+              weight: shadowLineWeight * 2
+            });
+          } else {
+            item.classList.remove('selected');
+            layers[index].shadowLayer.setStyle({ 
+              opacity: 0.5,
+              weight: shadowLineWeight
+            });
           }
         });
       }
     } else {
-      // Single selection
+      // Einzelauswahl
+      // Alle bisherigen Auswahlen aufheben
       selectedKMLs.forEach(selected => {
-        const item = kmlItems.querySelector(`[data-name="${selected.name}"]`);
-        if (item) item.classList.remove('selected');
+        const selectedItem = Array.from(kmlItems.children).find(item => 
+          item.textContent.includes(selected.name)
+        );
+        if (selectedItem) {
+          selectedItem.classList.remove('selected');
+          selected.shadowLayer.setStyle({ 
+            opacity: 0.5,
+            weight: shadowLineWeight
+          });
+        }
       });
+      // Neue Auswahl setzen
       selectedKMLs = [layerInfo];
       kmlItem.classList.add('selected');
+      layerInfo.shadowLayer.setStyle({ 
+        opacity: 1.0,
+        weight: shadowLineWeight * 2
+      });
     }
-
-    updateSelectedKMLs();
   });
 
   // Add context menu handler
@@ -161,23 +230,32 @@ function createKMLListItem(file, layerInfo, kmlItems, layers, map) {
 }
 
 /**
- * Sorts the KML list alphabetically
- * @param {HTMLElement} kmlItems - Container for KML list items
+ * Sortiert die KML-Liste alphabetisch
+ * 
+ * @param {HTMLElement} kmlItems - Container mit allen KML-Listeneinträgen
+ * 
+ * Diese Funktion wird genutzt, um die Liste übersichtlich zu halten.
+ * Die Sortierung basiert auf den extrahierten Nummern aus den Dateinamen,
+ * wodurch eine logische Reihenfolge der Befahrungsabschnitte entsteht.
  */
 function sortKMLList(kmlItems) {
   const items = Array.from(kmlItems.children);
   items.sort((a, b) => {
-    const nameA = a.querySelector('span').textContent.toLowerCase();
-    const nameB = b.querySelector('span').textContent.toLowerCase();
-    return nameA.localeCompare(nameB);
+    const aText = a.querySelector('.kml-number').textContent;
+    const bText = b.querySelector('.kml-number').textContent;
+    return aText.localeCompare(bText);
   });
-
+  
   kmlItems.innerHTML = '';
   items.forEach(item => kmlItems.appendChild(item));
 }
 
 /**
- * Updates the visual state of selected KMLs
+ * Aktualisiert den visuellen Zustand aller ausgewählten KMLs
+ * 
+ * Diese Funktion wird aufgerufen, wenn sich der Auswahlzustand ändert.
+ * Sie stellt sicher, dass alle UI-Elemente und Layer-Styles
+ * den aktuellen Auswahlzustand korrekt widerspiegeln.
  */
 function updateSelectedKMLs() {
   const kmlItems = document.getElementById('kml-items');
@@ -205,3 +283,114 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+
+/**
+ * Erstellt ein Kontextmenü für KML-Einträge
+ * 
+ * @param {Event} e - Das auslösende Event (Rechtsklick)
+ * @param {Object} layerInfo - Informationen über die KML-Ebene
+ * @param {L.Map} map - Die Leaflet-Karteninstanz
+ * @param {Array} layers - Array mit allen KML-Ebenen
+ * 
+ * Funktionen im Kontextmenü:
+ * - Zoom auf KML-Bereich
+ * - Farbe ändern
+ * - Layer ein-/ausblenden
+ * - Layer löschen
+ */
+function createContextMenu(e, layerInfo, map, layers) {
+  // Altes Kontextmenü entfernen falls vorhanden
+  const oldMenu = document.querySelector('.context-menu');
+  if (oldMenu) {
+    document.body.removeChild(oldMenu);
+  }
+
+  // Neues Kontextmenü erstellen
+  const contextMenu = document.createElement('div');
+  contextMenu.className = 'context-menu';
+  contextMenu.style.top = `${e.pageY}px`;
+  contextMenu.style.left = `${e.pageX}px`;
+
+  // Menüeinträge erstellen
+  const menuItems = [
+    {
+      text: 'Auf KML-Bereich zoomen',
+      icon: 'fa-search',
+      action: () => {
+        map.fitBounds(layerInfo.mainLayer.getBounds());
+      }
+    },
+    {
+      text: 'Farbe ändern',
+      icon: 'fa-palette',
+      action: () => {
+        const colorPicker = document.createElement('input');
+        colorPicker.type = 'color';
+        colorPicker.value = layerInfo.color;
+        colorPicker.click();
+        colorPicker.addEventListener('change', (e) => {
+          const newColor = e.target.value;
+          layerInfo.mainLayer.setStyle({ color: newColor });
+          layerInfo.color = newColor;
+          const kmlItem = document.querySelector(`[data-name="${layerInfo.name}"]`);
+          if (kmlItem) {
+            kmlItem.querySelector('.color-stripe').style.backgroundColor = newColor;
+          }
+        });
+      }
+    },
+    {
+      text: layerInfo.eyeIcon.classList.contains('fa-eye-slash') ? 'Layer einblenden' : 'Layer ausblenden',
+      icon: layerInfo.eyeIcon.classList.contains('fa-eye-slash') ? 'fa-eye' : 'fa-eye-slash',
+      action: () => {
+        layerInfo.eyeIcon.click();
+      }
+    },
+    {
+      text: 'Layer löschen',
+      icon: 'fa-trash',
+      action: () => {
+        map.removeLayer(layerInfo.mainLayer);
+        map.removeLayer(layerInfo.shadowLayer);
+        const kmlItem = document.querySelector(`[data-name="${layerInfo.name}"]`);
+        if (kmlItem) {
+          kmlItem.parentNode.removeChild(kmlItem);
+        }
+        layers.splice(layers.indexOf(layerInfo), 1);
+        selectedKMLs = selectedKMLs.filter(selected => selected !== layerInfo);
+      }
+    }
+  ];
+
+  // Menüeinträge zum Kontextmenü hinzufügen
+  menuItems.forEach(item => {
+    const menuItem = document.createElement('div');
+    menuItem.className = 'context-menu-item';
+    
+    const icon = document.createElement('i');
+    icon.className = `fas ${item.icon}`;
+    menuItem.appendChild(icon);
+    
+    const text = document.createElement('span');
+    text.textContent = item.text;
+    menuItem.appendChild(text);
+    
+    menuItem.addEventListener('click', () => {
+      item.action();
+      document.body.removeChild(contextMenu);
+    });
+    
+    contextMenu.appendChild(menuItem);
+  });
+
+  // Kontextmenü zum Dokument hinzufügen
+  document.body.appendChild(contextMenu);
+
+  // Event-Listener zum Schließen des Menüs
+  document.addEventListener('click', function closeMenu(e) {
+    if (!contextMenu.contains(e.target)) {
+      document.body.removeChild(contextMenu);
+      document.removeEventListener('click', closeMenu);
+    }
+  });
+}
