@@ -11,6 +11,7 @@ Der Befahrer Mapper ist eine spezialisierte Webanwendung für die Planung und Ko
   - Doppelte Linienführung für bessere Sichtbarkeit
   - Farbkodierung für verschiedene Teams/Abschnitte
   - Intelligente Selektierung mit visueller Hervorhebung
+- **Automatischer Fokus**: Automatische Zentrierung auf relevante Kartenabschnitte
 
 ## Funktionsweise
 
@@ -21,20 +22,81 @@ Der Befahrer Mapper ist eine spezialisierte Webanwendung für die Planung und Ko
    - Abschnitte farblich markieren
    - Mehrere Abschnitte gleichzeitig auswählen und vergleichen
 3. **Koordination**: Einfacher Überblick über alle geplanten Befahrungen
+4. **Projektauswahl**: 
+   - Schneller Wechsel zwischen verschiedenen Befahrungsprojekten
+   - Automatische Fokussierung auf relevante Kartenabschnitte
 
-### Technische Features
-- **Intelligente KML-Verwaltung**:
-  - Automatische Erkennung von Duplikaten
-  - Extraktion und prominente Anzeige von Abschnittsnummern
-  - Schwarze Schatten-Layer für bessere Sichtbarkeit
-- **Interaktive Kartenansicht**:
-  - Zoom-Funktionen
-  - Multi-Select von Abschnitten
-  - Hover-Effekte zur schnellen Identifizierung
-- **Benutzerfreundliche Oberfläche**:
-  - Klare, übersichtliche Darstellung
-  - Sofortiges visuelles Feedback
-  - Intuitive Bedienelemente
+## Technische Dokumentation
+
+### Dateistruktur und Komponenten
+
+#### `index.html`
+- **Hauptfunktion**: Zentrale Benutzeroberfläche und Struktur der Anwendung
+- **Wichtige Elemente**:
+  - Kartendarstellung (`#map`)
+  - Projekt-Auswahl (`#project-selector`)
+  - KML-Listenansicht (`#kml-items`)
+  - Verschiedene UI-Kontrollelemente
+
+#### `main.js`
+- **Hauptfunktion**: Zentrale Anwendungslogik und Kartensteuerung
+- **Kernfunktionalitäten**:
+  - Karteninitialisierung und Grundeinstellungen
+  - Projekt-Management (`loadProjectKMLs`)
+  - Drag & Drop-Verarbeitung
+  - Layer-Management und Visualisierung
+  - Automatische Kartenfokussierung auf Projektbereiche
+
+#### `kmlProcessor.js`
+- **Hauptfunktion**: Verarbeitung und Verwaltung von KML-Dateien
+- **Kernfunktionalitäten**:
+  - KML-Datei-Parsing und Konvertierung
+  - Duplikatserkennung
+  - Layer-Erstellung und Styling
+  - Extraktion von Abschnittsnummern
+
+#### `contextMenu.js`
+- **Hauptfunktion**: Kontextmenü-Funktionalität für Karteninteraktionen
+- **Kernfunktionalitäten**:
+  - Rechtsklick-Menü
+  - Kontextabhängige Aktionen
+  - Layer-spezifische Operationen
+
+### Wichtige Funktionen im Detail
+
+#### Projekt-Management (`main.js`)
+```javascript
+async function loadProjectKMLs(projektName)
+```
+- Lädt alle KML-Dateien eines Projekts
+- Bereinigt bestehende Layer
+- Verarbeitet neue KML-Dateien
+- Fokussiert die Karte automatisch auf den relevanten Bereich
+- Parameter:
+  - `projektName`: Name des zu ladenden Projekts
+
+#### KML-Verarbeitung (`kmlProcessor.js`)
+```javascript
+function processKMLFile(file, map, kmlItems, layers)
+```
+- Verarbeitet einzelne KML-Dateien
+- Erstellt Layer und Visualisierungen
+- Fügt Einträge zur KML-Liste hinzu
+- Parameter:
+  - `file`: Die zu verarbeitende KML-Datei
+  - `map`: Leaflet-Kartenobjekt
+  - `kmlItems`: Container für KML-Listeneinträge
+  - `layers`: Array für Layer-Verwaltung
+
+### Technischer Stack
+- **Frontend**: 
+  - HTML5, CSS3, JavaScript
+  - Leaflet.js für Kartendarstellung
+  - toGeoJSON für KML-Verarbeitung
+- **Backend**: 
+  - PHP für Dateisystem-Operationen
+- **Hosting**: 
+  - STRATO Webspace
 
 ## Geplante Erweiterungen
 
@@ -57,13 +119,6 @@ Der Befahrer Mapper ist eine spezialisierte Webanwendung für die Planung und Ko
   - Echtzeit-Kollaboration
   - Automatische Routenoptimierung
   - Fortschrittsverfolgung
-
-## Technischer Stack
-- **Frontend**: HTML5, CSS3, JavaScript
-- **Kartendarstellung**: Leaflet.js
-- **Datenverarbeitung**: toGeoJSON
-- **Backend**: PHP
-- **Hosting**: STRATO Webspace
 
 ## Mitwirkung
 Feedback und Verbesserungsvorschläge sind willkommen! Die Anwendung wird kontinuierlich weiterentwickelt, um den Bedürfnissen der Befahrungsteams gerecht zu werden.

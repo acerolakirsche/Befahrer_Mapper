@@ -117,6 +117,24 @@ async function loadProjectKMLs(projektName) {
       processKMLFile(file, map, kmlItems, layers);
     }
 
+    // Kurz warten, bis die Layer vollständig geladen sind
+    setTimeout(() => {
+      // Bounds für alle Layer berechnen
+      if (layers.length > 0) {
+        const bounds = L.latLngBounds([]);
+        layers.forEach(layerInfo => {
+          bounds.extend(layerInfo.mainLayer.getBounds());
+        });
+        
+        // Karte auf den Bereich fokussieren mit Animation
+        map.flyToBounds(bounds, { 
+          padding: [50, 50],
+          maxZoom: 15,
+          duration: 1.5  // Dauer der Animation in Sekunden
+        });
+      }
+    }, 1000);  // 1 Sekunde warten
+
     // Erfolgsmeldung anzeigen
     showTempMessage(NACHRICHTEN.ERFOLG.PROJEKT_GELADEN(projektName), '#4CAF50');
   } catch (error) {
