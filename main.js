@@ -82,22 +82,23 @@ async function loadProjectKMLs(projectName) {
   kmlItems.innerHTML = '';
   
   try {
-    const response = await fetch(`Befahrungsprojekte/${projectName}/`);
-    const text = await response.text();
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(text, 'text/html');
-    
-    // Extract KML files from directory listing
-    const kmlFiles = Array.from(doc.querySelectorAll('a'))
-      .map(a => a.textContent)
-      .filter(name => name.endsWith('.kml'))
-      .map(name => new File([], name));
-    
-    if (kmlFiles.length > 0) {
-      processKMLFiles(kmlFiles, map, kmlItems, layers);
-    }
-    
+    // Set current project name immediately
     currentProject = projectName;
+    selectedProjectDisplay.textContent = projectName;
+
+    // Debug output for the path
+    const fetchPath = `getKMLFiles.php?project=${encodeURIComponent(projectName)}`;
+    console.log('Attempting to fetch KML files list from:', fetchPath);
+    
+    // Fetch directory listing
+    const response = await fetch(fetchPath);
+    const kmlFiles = await response.json();
+    
+    // Process each KML file
+    for (const fileName of kmlFiles) {
+      const file = { name: fileName };
+      processKMLFile(file, map, kmlItems, layers);
+    }
   } catch (error) {
     console.error('Error loading project KMLs:', error);
     showTempMessage('Error loading project KMLs', '#ff4444');
@@ -122,7 +123,6 @@ fetch('getProjects.php')
 // Add event listener to the project selector
 projectSelector.addEventListener('change', function() {
   const selectedProject = this.value;
-  selectedProjectDisplay.textContent = selectedProject;
   if (selectedProject) {
     loadProjectKMLs(selectedProject);
   }
