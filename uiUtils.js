@@ -84,6 +84,25 @@ function createKMLListItem(file, layerInfo, kmlItems, layers, map) {
   };
   kmlItem.appendChild(deleteIcon);
 
+  // Add hover functionality to show bounding box
+  let boundingBoxLayer = null;
+  kmlItem.addEventListener('mouseenter', () => {
+    const bounds = layerInfo.mainLayer.getBounds();
+    boundingBoxLayer = L.rectangle(bounds, {
+      color: '#000000',
+      weight: 10,
+      opacity: 0.5,
+      fill: false
+    }).addTo(map);
+  });
+
+  kmlItem.addEventListener('mouseleave', () => {
+    if (boundingBoxLayer) {
+      map.removeLayer(boundingBoxLayer);
+      boundingBoxLayer = null;
+    }
+  });
+
   // Add click handler for selection
   kmlItem.addEventListener('click', (e) => {
     e.stopPropagation();
