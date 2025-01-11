@@ -39,9 +39,17 @@ function processKMLFiles(files, map, kmlItems, layers) {
   const ignoredFiles = []; // Ignorierte Dateien (Duplikate)
   const addedFiles = []; // Erfolgreich hinzugefügte Dateien
 
+  const invalidFiles = []; // Dateien mit ungültigen Namen
+  
   // Jede Datei in der Liste verarbeiten
   for (const file of files) {
     if (file.name.endsWith('.kml')) {
+      // Prüfen ob Dateiname gültig ist
+      if (!validateFilename(file.name)) {
+        invalidFiles.push(file.name);
+        continue;
+      }
+      
       // Prüfen ob Datei ein Duplikat ist
       const isDuplicate = layers.some(layerInfo => layerInfo.name === file.name);
       if (isDuplicate) {
@@ -55,8 +63,19 @@ function processKMLFiles(files, map, kmlItems, layers) {
       showTempMessage(NACHRICHTEN.WARNUNG.UNGUELTIGE_DATEI, '#ffa500');
     }
   }
+  
+  // Fehlermeldung für ungültige Dateinamen anzeigen
+  let invalidMessageElement = null;
+  if (invalidFiles.length > 0) {
+    const message = `Folgende KML-Dateien entsprechen nicht der Benennungskonvention (erwartet: zwei Ziffern von 01-99):\n${invalidFiles.join('\n')}`;
+    invalidMessageElement = showTempMessage(message, '#ff4444');
+  }
 
-  return { ignoredFiles, addedFiles };
+  return {
+    ignoredFiles,
+    addedFiles,
+    invalidMessageElement
+  };
 }
 
 /**
@@ -205,5 +224,21 @@ function extractNumberFromFilename(filename) {
   const startPos = nameWithoutExtension.length - 13;
   
   // Zweistellige Nummer extrahieren
-  return nameWithoutExtension.substring(startPos, startPos + 2);
+  const number = nameWithoutExtension.substring(startPos, startPos + 2);
+  
+  // Überprüfen ob die extrahierte Zahl gültig ist
+  if (!/^\d{2}$/.test(number)) {
+    throw new Error(`Ungültige Nummer im Dateinamen: ${filename}`);
+  }
+  
+  return number;
+}
+
+function validateFilename(filename) {
+  try {
+    extractNumberFromFilename(filename);
+    return true;
+  } catch (error) {
+    return false;
+  }
 }

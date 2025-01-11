@@ -49,15 +49,17 @@ dropArea.addEventListener('drop', (e) => {
   const files = e.dataTransfer.files;
 
   // KML-Dateien verarbeiten und Ergebnisse sammeln
-  const { ignoredFiles, addedFiles } = processKMLFiles(files, map, kmlItems, layers);
+  const { ignoredFiles, addedFiles, invalidMessageElement } = processKMLFiles(files, map, kmlItems, layers);
 
   // Meldungen für ignorierte und hinzugefügte Dateien anzeigen
-  let warnungElement = null;
+  let versatz = invalidMessageElement ? invalidMessageElement.offsetHeight + 20 : 0;
+  
   if (ignoredFiles.length > 0) {
-    const duplikatNachricht = ignoredFiles.map(datei => 
+    const duplikatNachricht = ignoredFiles.map(datei =>
       NACHRICHTEN.WARNUNG.DUPLIKAT(datei)
     ).join('\n');
-    warnungElement = showTempMessage(duplikatNachricht, '#ffa500');
+    const warnungElement = showTempMessage(duplikatNachricht, '#ffa500', 5000, versatz);
+    versatz += warnungElement.offsetHeight + 20;
   }
 
   if (addedFiles.length > 0) {
@@ -65,8 +67,6 @@ dropArea.addEventListener('drop', (e) => {
       NACHRICHTEN.ERFOLG.KML_HINZUGEFUEGT(datei)
     ).join('\n');
     setTimeout(() => {
-      // Erfolgsmeldung unter Warnungen positionieren
-      const versatz = warnungElement ? warnungElement.offsetHeight + 20 : 0;
       showTempMessage(erfolgNachricht, '#4CAF50', 5000, versatz);
     }, 100);
   }
