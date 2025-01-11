@@ -45,8 +45,13 @@
       <!-- Projektauswahl-Dropdown -->
       <select id="project-selector">
         <option value="">Projekt auswählen</option>
-        <option value="">neues Projekt</option>
+        <option value="neues Projekt">neues Projekt</option>
       </select>
+      
+      <div id="new-project-form" style="display: none;">
+        <input type="text" id="new-project-name" placeholder="Neuer Projektname">
+        <button id="create-project-btn">Erstellen</button>
+      </div>
 
       <!-- Farbwähler für KML-Styling 
            Ermöglicht schnelles Umfärben von KML-Linien

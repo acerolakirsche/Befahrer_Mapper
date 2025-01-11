@@ -77,6 +77,7 @@ const layers = []; // Speichert Informationen über alle KML-Layer
 const kmlItems = document.getElementById('kml-items'); // Container für KML-Listeneinträge
 const projectSelector = document.getElementById('project-selector');
 const selectedProjectDisplay = document.getElementById('selected-project-display');
+const newProjectForm = document.getElementById('new-project-form'); // Formular für neue Projekte
 let currentProject = null; // Aktuell ausgewähltes Projekt
 
 /**
@@ -162,7 +163,48 @@ fetch('getProjects.php')
 // Event-Listener für die Projektauswahl
 projectSelector.addEventListener('change', function() {
   const selectedProject = this.value;
-  if (selectedProject) {
+  const newProjectForm = document.getElementById('new-project-form');
+  
+  if (selectedProject === 'neues Projekt') {
+    newProjectForm.style.display = 'flex';
+  } else if (selectedProject) {
+    newProjectForm.style.display = 'none';
     loadProjectKMLs(selectedProject);
+  } else {
+    newProjectForm.style.display = 'none';
   }
+});
+
+// Funktion zur Validierung des Projektnamens
+function isValidProjectName(projectName) {
+  // Erlaubt: Buchstaben (a-z, A-Z), Zahlen (0-9), Bindestrich (-), Unterstrich (_)
+  const validChars = /^[a-zA-Z0-9-_]+$/;
+  return validChars.test(projectName);
+}
+
+// Event-Listener für den "Erstellen"-Button
+const createProjectBtn = document.getElementById('create-project-btn');
+createProjectBtn.addEventListener('click', function() {
+  const newProjectNameInput = document.getElementById('new-project-name');
+  const newProjectName = newProjectNameInput.value.trim();
+  
+  if (!newProjectName) {
+    showTempMessage('Bitte geben Sie einen Projektnamen ein.', '#ff4444');
+    return;
+  }
+  
+  if (!isValidProjectName(newProjectName)) {
+    showTempMessage(
+      'Ungültige Zeichen im Projektnamen. Erlaubt sind nur: Buchstaben (a-z, A-Z), Zahlen (0-9), Bindestrich (-) und Unterstrich (_).',
+      '#ff4444'
+    );
+    return;
+  }
+  
+  // Hier wird die Logik zum Erstellen des neuen Projekts stehen
+  showTempMessage(`Projekt "${newProjectName}" wird erstellt`, '#4CAF50');
+  newProjectForm.style.display = 'none';
+  newProjectNameInput.value = ''; // Eingabefeld leeren
+  // Hier könnte man die Projektliste aktualisieren
+  projectSelector.value = ''; // Dropdown zurücksetzen
 });

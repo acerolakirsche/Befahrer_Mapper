@@ -14,7 +14,6 @@ Der Befahrer Mapper ist eine spezialisierte Webanwendung für die Planung und Ko
 - **Automatischer Fokus**: Automatische Zentrierung auf relevante Kartenabschnitte
 
 ## Funktionsweise
-
 ### Für Befahrungsteams
 1. **Zugriff**: Öffnen Sie die Webseite in einem beliebigen Browser
 2. **Befahrungsplanung**: 
@@ -25,6 +24,7 @@ Der Befahrer Mapper ist eine spezialisierte Webanwendung für die Planung und Ko
 4. **Projektauswahl**: 
    - Schneller Wechsel zwischen verschiedenen Befahrungsprojekten
    - Automatische Fokussierung auf relevante Kartenabschnitte
+   - Auswahl eines neuen Projekts aus dem Dropdown-Menü. Ein Engabefeld erscheint für den User, und ein Button mit der Aufschrift "Erstellen".
 
 ## Technische Dokumentation
 
