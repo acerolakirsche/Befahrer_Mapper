@@ -8,10 +8,13 @@ Der Befahrer Mapper ist eine spezialisierte Webanwendung für die Planung und Ko
 - **Einfache Bedienung**: Optimiert für nicht-technische Nutzer
 - **Projektverwaltung**: Erstellen und Verwalten von separaten Befahrungsprojekten
 - **Drag & Drop KML-Import**: Schnelles Hinzufügen von Befahrungsabschnitten
-- **Visuelle Hervorhebung**: 
-  - Doppelte Linienführung für bessere Sichtbarkeit
-  - Farbkodierung für verschiedene Teams/Abschnitte
-  - Intelligente Selektierung mit visueller Hervorhebung
+  - **Visuelle Hervorhebung**: 
+    - Doppelte Linienführung für bessere Sichtbarkeit
+    - Farbkodierung für verschiedene Teams/Abschnitte
+    - Intelligente Selektierung mit visueller Hervorhebung
+    - Bounding Box beim Hovern über KML-Einträge
+      - Präzise positionierte Info-Labels mit Schatteneffekt für bessere Lesbarkeit
+    - Automatische Entfernung der Bounding Box beim Löschen
 - **Automatischer Fokus**: Automatische Zentrierung auf relevante Kartenabschnitte
 - **Verbesserte Benutzeroberfläche**:
   - Optimierte Dropdown-Menüs mit klarer visueller Hierarchie
@@ -128,31 +131,3 @@ function processKMLFile(file, map, kmlItems, layers)
   - PHP für Dateisystem-Operationen
 - **Hosting**: 
   - STRATO Webspace
-
-## Geplante Erweiterungen
-
-### Kurzfristig
-- **Benutzerkonten**: 
-  - Persönliche Ansichten speichern
-  - Teamspezifische Einstellungen
-- **Erweiterte KML-Informationen**:
-  - Anzeige der Streckenlänge in Kilometern
-  - Zeitschätzungen für Befahrungen
-
-### Mittelfristig
-- **Erweiterte Kartenansichten**:
-  - Satellitenbilder für Geländeeinschätzung
-  - Wetterdaten-Integration
-  - Wetter-Satellitenbilder-Overlay
-
-### Langfristig
-- **Team-Koordination**:
-  - Echtzeit-Kollaboration
-  - Automatische Routenoptimierung
-  - Fortschrittsverfolgung
-
-## Mitwirkung
-Feedback und Verbesserungsvorschläge sind willkommen! Die Anwendung wird kontinuierlich weiterentwickelt, um den Bedürfnissen der Befahrungsteams gerecht zu werden.
-
-## Lizenz
-Dieses Projekt steht unter der MIT-Lizenz.

@@ -295,3 +295,26 @@ option.new-project-option::before {
   margin-right: 5px;
   display: inline-block;
 }
+
+/* Bounding Box und Info-Label */
+.leaflet-interactive.bbox {
+  stroke: #ff7800;
+  stroke-width: 2;
+  stroke-opacity: 1;
+  fill-opacity: 0.1;
+  pointer-events: none;
+}
+
+.bbox-info-label {
+  font-family: Arial, sans-serif;
+  font-size: 10px;
+  color: #333;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 2px 4px;
+  border-radius: 3px;
+  pointer-events: none;
+  text-align: center;
+  white-space: nowrap;
+  transform: translate(-50%, 50%);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}

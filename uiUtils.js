@@ -102,6 +102,11 @@ function createKMLListItem(file, layerInfo, kmlItems, layers, map) {
     // Entfernt beide Layer und den Listeneintrag
     map.removeLayer(layerInfo.mainLayer);
     map.removeLayer(layerInfo.shadowLayer);
+    // Entfernt die Bounding Box falls vorhanden
+    if (boundingBoxLayer) {
+      map.removeLayer(boundingBoxLayer);
+      boundingBoxLayer = null;
+    }
     kmlItems.removeChild(kmlItem);
     layers.splice(layers.indexOf(layerInfo), 1);
     selectedKMLs = selectedKMLs.filter(selected => selected !== layerInfo);
@@ -111,20 +116,45 @@ function createKMLListItem(file, layerInfo, kmlItems, layers, map) {
   // Hover-Effekt für KML-Hervorhebung
   // Zeigt eine Bounding-Box um die KML auf der Karte
   let boundingBoxLayer = null;
-  kmlItem.addEventListener('mouseenter', () => {
-    const bounds = layerInfo.mainLayer.getBounds();
-    boundingBoxLayer = L.rectangle(bounds, {
+  let infoLabel = null;
+
+  function createBoundingBox(layer) {
+    const bounds = layer.getBounds();
+    const bbox = L.rectangle(bounds, {
       color: '#000000',
       weight: 10,
       opacity: 0.5,
-      fill: false
+      fill: false,
+      interactive: false
     }).addTo(map);
+
+    // Info-Label erstellen
+    const southWest = bounds.getSouthWest();
+    infoLabel = L.marker(southWest, {
+      icon: L.divIcon({
+        className: 'bbox-info-label',
+        html: `KML ${extractNumberFromFilename(layerInfo.name)}`,
+        iconSize: null
+      }),
+      interactive: false,
+      offset: [10, -10] // Leichter Versatz nach rechts oben
+    }).addTo(map);
+
+    return bbox;
+  }
+
+  kmlItem.addEventListener('mouseenter', () => {
+    boundingBoxLayer = createBoundingBox(layerInfo.mainLayer);
   });
 
   kmlItem.addEventListener('mouseleave', () => {
     if (boundingBoxLayer) {
       map.removeLayer(boundingBoxLayer);
       boundingBoxLayer = null;
+    }
+    if (infoLabel) {
+      map.removeLayer(infoLabel);
+      infoLabel = null;
     }
   });
 
