@@ -13,6 +13,10 @@ Der Befahrer Mapper ist eine spezialisierte Webanwendung für die Planung und Ko
   - Farbkodierung für verschiedene Teams/Abschnitte
   - Intelligente Selektierung mit visueller Hervorhebung
 - **Automatischer Fokus**: Automatische Zentrierung auf relevante Kartenabschnitte
+- **Verbesserte Benutzeroberfläche**:
+  - Optimierte Dropdown-Menüs mit klarer visueller Hierarchie
+  - Konsistente Farbgebung und Formatierung
+  - Browser-kompatible CSS-Implementierungen
 
 ## Funktionsweise
 ### Für Befahrungsteams
@@ -30,6 +34,7 @@ Der Befahrer Mapper ist eine spezialisierte Webanwendung für die Planung und Ko
       - Eingabe des Projektnamens (erlaubt sind Buchstaben, Zahlen, Bindestrich und Unterstrich)
       - Automatische Erstellung der Projektstruktur mit KML-Ordner
       - Sofortige Verfügbarkeit des neuen Projekts in der Auswahlliste
+      - Verbesserte visuelle Darstellung der "neues Projekt" Option mit grünem Plus-Zeichen
 
 ## Technische Dokumentation
 
@@ -39,7 +44,7 @@ Der Befahrer Mapper ist eine spezialisierte Webanwendung für die Planung und Ko
 - **Hauptfunktion**: Zentrale Benutzeroberfläche und Struktur der Anwendung
 - **Wichtige Elemente**:
   - Kartendarstellung (`#map`)
-  - Projekt-Auswahl (`#project-selector`)
+  - Projekt-Auswahl (`#project-selector`) mit optimierter CSS-Klassenstruktur
   - KML-Listenansicht (`#kml-items`)
   - Verschiedene UI-Kontrollelemente
 
@@ -66,6 +71,14 @@ Der Befahrer Mapper ist eine spezialisierte Webanwendung für die Planung und Ko
   - Rechtsklick-Menü
   - Kontextabhängige Aktionen
   - Layer-spezifische Operationen
+
+#### `styles.css`
+- **Hauptfunktion**: Visuelle Gestaltung und Benutzeroberfläche
+- **Neue Features**:
+  - Optimierte CSS-Klassen für Dropdown-Menüs
+  - Verbesserte Browser-Kompatibilität
+  - Konsistente Farbgebung und Formatierung
+  - ::before Pseudo-Elemente für Icons
 
 ### Wichtige Funktionen im Detail
 

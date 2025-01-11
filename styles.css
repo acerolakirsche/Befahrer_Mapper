@@ -281,3 +281,17 @@ body {
 #kml-context-menu div:hover {
   background-color: #f5f5f5; /* Heller Hintergrund beim Hover */
 }
+
+/* Stile für die "neues Projekt" Option */
+option.new-project-option {
+  color: black !important;
+  font-weight: normal;
+}
+
+option.new-project-option::before {
+  content: "➕";
+  color: green;
+  font-weight: bold;
+  margin-right: 5px;
+  display: inline-block;
+}

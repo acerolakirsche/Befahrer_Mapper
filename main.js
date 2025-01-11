@@ -151,7 +151,13 @@ fetch('getProjects.php')
     projects.forEach(project => {
       const option = document.createElement('option');
       option.value = project;
-      option.textContent = project;
+      if (project === 'neues Projekt') {
+        option.textContent = '➕ neues Projekt';
+        option.style.color = 'green';
+        option.style.fontWeight = 'bold';
+      } else {
+        option.textContent = project;
+      }
       projectSelector.appendChild(option);
     });
   })
