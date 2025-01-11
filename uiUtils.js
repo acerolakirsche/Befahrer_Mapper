@@ -159,10 +159,31 @@ function createKMLListItem(file, layerInfo, kmlItems, layers, map) {
   });
 
   // Click-Handler für Auswahl-Funktionalität
-  // Implementiert drei Auswahlmodi:
-  // 1. Normaler Klick: Einzelauswahl
-  // 2. Strg/Cmd + Klick: Toggle-Auswahl (für Mehrfachauswahl)
-  // 3. Shift + Klick: Bereichsauswahl
+  // Implementiert drei Auswahlmodi mit visueller Hervorhebung:
+  // 1. Einzelauswahl: Klicken ohne Modifikatortaste
+  //   - Hebt alle vorherigen Auswahlen auf
+  //   - Setzt die aktuelle Auswahl
+  //   - Visuelle Hervorhebung durch CSS-Klasse .selected
+  //   - Synchronisierte Hervorhebung auf der Karte durch erhöhte Opazität
+  // 2. Mehrfachauswahl: Strg/Cmd + Klick
+  //   - Toggle-Funktion: Fügt Element zur Auswahl hinzu oder entfernt es
+  //   - Ermöglicht die Auswahl mehrerer nicht-benachbarter Elemente
+  //   - Visuelle Hervorhebung bleibt für alle ausgewählten Elemente bestehen
+  // 3. Bereichsauswahl: Shift + Klick
+  //   - Wählt alle Elemente zwischen der letzten und aktuellen Auswahl
+  //   - Nützlich für die Auswahl zusammenhängender Befahrungsabschnitte
+  //   - Automatische Hervorhebung des gesamten Bereichs
+  // Doppelklick-Listener für Debugging
+  kmlItem.addEventListener('dblclick', (e) => {
+    e.stopPropagation();
+    console.log('Doppelklick auf KML-Eintrag:', {
+      name: file.name,
+      number: number,
+      color: layerInfo.color,
+      visible: !eyeIcon.classList.contains('fa-eye-slash')
+    });
+  });
+
   kmlItem.addEventListener('click', (e) => {
     e.stopPropagation();
 

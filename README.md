@@ -8,13 +8,18 @@ Der Befahrer Mapper ist eine spezialisierte Webanwendung für die Planung und Ko
 - **Einfache Bedienung**: Optimiert für nicht-technische Nutzer
 - **Projektverwaltung**: Erstellen und Verwalten von separaten Befahrungsprojekten
 - **Drag & Drop KML-Import**: Schnelles Hinzufügen von Befahrungsabschnitten
-  - **Visuelle Hervorhebung**: 
-    - Doppelte Linienführung für bessere Sichtbarkeit
-    - Farbkodierung für verschiedene Teams/Abschnitte
-    - Intelligente Selektierung mit visueller Hervorhebung
-    - Bounding Box beim Hovern über KML-Einträge
-      - Präzise positionierte Info-Labels mit Schatteneffekt für bessere Lesbarkeit
-    - Automatische Entfernung der Bounding Box beim Löschen
+    - **Visuelle Hervorhebung**: 
+      - Doppelte Linienführung für bessere Sichtbarkeit
+      - Farbkodierung für verschiedene Teams/Abschnitte
+      - Intelligente Selektierung mit visueller Hervorhebung
+        - Einzelauswahl: Klicken ohne Modifikatortaste
+        - Mehrfachauswahl: Strg/Cmd + Klick
+        - Bereichsauswahl: Shift + Klick
+        - Visuelle Hervorhebung durch blaue Hinterlegung
+        - Synchronisierte Hervorhebung auf der Karte
+      - Bounding Box beim Hovern über KML-Einträge
+        - Präzise positionierte Info-Labels mit Schatteneffekt für bessere Lesbarkeit
+      - Automatische Entfernung der Bounding Box beim Löschen
 - **Automatischer Fokus**: Automatische Zentrierung auf relevante Kartenabschnitte
 - **Verbesserte Benutzeroberfläche**:
   - Optimierte Dropdown-Menüs mit klarer visueller Hierarchie
@@ -74,6 +79,10 @@ Der Befahrer Mapper ist eine spezialisierte Webanwendung für die Planung und Ko
   - Rechtsklick-Menü
   - Kontextabhängige Aktionen
   - Layer-spezifische Operationen
+  - Zoom-Funktionen:
+    * Zoom auf spezifische KML-Grenzen
+    * Zoom auf kombinierte Layer-Grenzen
+    * Zoom auf Deutschland (festgelegte Koordinaten und Zoomstufe)
 
 #### `styles.css`
 - **Hauptfunktion**: Visuelle Gestaltung und Benutzeroberfläche
