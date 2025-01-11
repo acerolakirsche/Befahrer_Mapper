@@ -6,6 +6,7 @@ Der Befahrer Mapper ist eine spezialisierte Webanwendung für die Planung und Ko
 ### Hauptmerkmale
 - **Browserbasiert & Überall verfügbar**: Läuft auf STRATO Webspace und ist von überall ohne Installation zugänglich
 - **Einfache Bedienung**: Optimiert für nicht-technische Nutzer
+- **Projektverwaltung**: Erstellen und Verwalten von separaten Befahrungsprojekten
 - **Drag & Drop KML-Import**: Schnelles Hinzufügen von Befahrungsabschnitten
 - **Visuelle Hervorhebung**: 
   - Doppelte Linienführung für bessere Sichtbarkeit
@@ -21,10 +22,14 @@ Der Befahrer Mapper ist eine spezialisierte Webanwendung für die Planung und Ko
    - Abschnitte farblich markieren
    - Mehrere Abschnitte gleichzeitig auswählen und vergleichen
 3. **Koordination**: Einfacher Überblick über alle geplanten Befahrungen
-4. **Projektauswahl**: 
-   - Schneller Wechsel zwischen verschiedenen Befahrungsprojekten
-   - Automatische Fokussierung auf relevante Kartenabschnitte
-   - Auswahl eines neuen Projekts aus dem Dropdown-Menü. Ein Engabefeld erscheint für den User, und ein Button mit der Aufschrift "Erstellen".
+4. **Projektauswahl und -erstellung**:
+    - Schneller Wechsel zwischen verschiedenen Befahrungsprojekten
+    - Automatische Fokussierung auf relevante Kartenabschnitte
+    - Einfache Erstellung neuer Projekte:
+      - Auswahl "neues Projekt" aus dem Dropdown-Menü
+      - Eingabe des Projektnamens (erlaubt sind Buchstaben, Zahlen, Bindestrich und Unterstrich)
+      - Automatische Erstellung der Projektstruktur mit KML-Ordner
+      - Sofortige Verfügbarkeit des neuen Projekts in der Auswahlliste
 
 ## Technische Dokumentation
 
@@ -64,7 +69,7 @@ Der Befahrer Mapper ist eine spezialisierte Webanwendung für die Planung und Ko
 
 ### Wichtige Funktionen im Detail
 
-#### Projekt-Management (`main.js`)
+#### Projekt-Management (`main.js`, `getProjects.php`)
 ```javascript
 async function loadProjectKMLs(projektName)
 ```
@@ -74,6 +79,19 @@ async function loadProjectKMLs(projektName)
 - Fokussiert die Karte automatisch auf den relevanten Bereich
 - Parameter:
   - `projektName`: Name des zu ladenden Projekts
+
+```javascript
+// Projekterstellung via POST-Request
+fetch('getProjects.php', {
+  method: 'POST',
+  body: 'action=create&projectName=projektName'
+})
+```
+- Erstellt ein neues Befahrungsprojekt
+- Erzeugt automatisch die erforderliche Ordnerstruktur
+- Erstellt einen KML-Files Unterordner für Befahrungsdaten
+- Validiert Projektnamen auf erlaubte Zeichen
+- Verhindert Duplikate von Projektnamen
 
 #### KML-Verarbeitung (`kmlProcessor.js`)
 ```javascript

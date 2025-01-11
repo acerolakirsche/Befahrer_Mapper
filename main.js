@@ -201,10 +201,37 @@ createProjectBtn.addEventListener('click', function() {
     return;
   }
   
-  // Hier wird die Logik zum Erstellen des neuen Projekts stehen
-  showTempMessage(`Projekt "${newProjectName}" wird erstellt`, '#4CAF50');
+  // Neues Projekt über API erstellen
+  fetch('getProjects.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: `action=create&projectName=${encodeURIComponent(newProjectName)}`
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'success') {
+      showTempMessage(`Projekt "${newProjectName}" erfolgreich erstellt`, '#4CAF50');
+      
+      // Dropdown aktualisieren
+      const option = document.createElement('option');
+      option.value = newProjectName;
+      option.textContent = newProjectName;
+      projectSelector.appendChild(option);
+      
+      // Neues Projekt direkt auswählen
+      projectSelector.value = newProjectName;
+      loadProjectKMLs(newProjectName);
+    } else {
+      showTempMessage(`Fehler: ${data.message}`, '#ff4444');
+    }
+  })
+  .catch(error => {
+    console.error('Fehler beim Erstellen des Projekts:', error);
+    showTempMessage('Fehler beim Erstellen des Projekts', '#ff4444');
+  });
+  
   newProjectForm.style.display = 'none';
   newProjectNameInput.value = ''; // Eingabefeld leeren
-  // Hier könnte man die Projektliste aktualisieren
-  projectSelector.value = ''; // Dropdown zurücksetzen
 });
