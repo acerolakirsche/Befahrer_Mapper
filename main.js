@@ -176,10 +176,57 @@ projectSelector.addEventListener('change', function() {
 });
 
 // Funktion zur Validierung des Projektnamens
+function sanitizeProjectName(projectName) {
+  // Vorangehende Sonderzeichen entfernen
+  projectName = projectName.replace(/^[^a-zA-Z0-9]+/, '');
+  
+  // "Befahrung" (case-insensitive) entfernen
+  projectName = projectName.replace(/\bBefahrung\b/gi, '');
+  
+  // Umlaute ersetzen
+  const umlautMap = {
+    'ä': 'ae',
+    'ö': 'oe',
+    'ü': 'ue',
+    'Ä': 'Ae',
+    'Ö': 'Oe',
+    'Ü': 'Ue',
+    'ß': 'ss'
+  };
+  
+  // Umlaute durch ihre Entsprechungen ersetzen
+  projectName = projectName.replace(/[äöüÄÖÜß]/g, match => umlautMap[match]);
+  
+  // Leerzeichen durch Unterstriche ersetzen
+  projectName = projectName.replace(/\s+/g, '_');
+  
+  // Pluszeichen durch "plus" ersetzen
+  projectName = projectName.replace(/\+/g, 'plus');
+  
+  // Alle verbleibenden Sonderzeichen durch Unterstriche ersetzen
+  projectName = projectName.replace(/[^a-zA-Z0-9-_]/g, '_');
+  
+  // Mehrfache Unterstriche durch einen einzelnen ersetzen
+  projectName = projectName.replace(/_+/g, '_');
+  
+  // Führende und abschließende Unterstriche entfernen
+  projectName = projectName.replace(/^_+|_+$/g, '');
+  
+  return projectName;
+}
+
 function isValidProjectName(projectName) {
+  // Zuerst den Namen bereinigen
+  const sanitizedName = sanitizeProjectName(projectName);
+  
   // Erlaubt: Buchstaben (a-z, A-Z), Zahlen (0-9), Bindestrich (-), Unterstrich (_)
   const validChars = /^[a-zA-Z0-9-_]+$/;
-  return validChars.test(projectName);
+  
+  // Prüfen ob der bereinigte Name gültig ist
+  return {
+    isValid: validChars.test(sanitizedName),
+    sanitizedName: sanitizedName
+  };
 }
 
 // Event-Listener für den "Erstellen"-Button
@@ -193,12 +240,14 @@ createProjectBtn.addEventListener('click', function() {
     return;
   }
   
-  if (!isValidProjectName(newProjectName)) {
+  // Projektnamen bereinigen und validieren
+  const { isValid, sanitizedName } = isValidProjectName(newProjectName);
+  
+  if (!isValid) {
     showTempMessage(
-      'Ungültige Zeichen im Projektnamen. Erlaubt sind nur: Buchstaben (a-z, A-Z), Zahlen (0-9), Bindestrich (-) und Unterstrich (_).',
-      '#ff4444'
+      `Der Projektname wurde automatisch angepasst zu: ${sanitizedName}`,
+      '#4CAF50'
     );
-    return;
   }
   
   // Neues Projekt über API erstellen
@@ -207,22 +256,22 @@ createProjectBtn.addEventListener('click', function() {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
     },
-    body: `action=create&projectName=${encodeURIComponent(newProjectName)}`
+    body: `action=create&projectName=${encodeURIComponent(sanitizedName)}`
   })
   .then(response => response.json())
   .then(data => {
     if (data.status === 'success') {
       showTempMessage(`Projekt "${newProjectName}" erfolgreich erstellt`, '#4CAF50');
       
-      // Dropdown aktualisieren
+      // Dropdown aktualisieren mit bereinigtem Namen
       const option = document.createElement('option');
-      option.value = newProjectName;
-      option.textContent = newProjectName;
+      option.value = sanitizedName;
+      option.textContent = sanitizedName;
       projectSelector.appendChild(option);
       
       // Neues Projekt direkt auswählen
-      projectSelector.value = newProjectName;
-      loadProjectKMLs(newProjectName);
+      projectSelector.value = sanitizedName;
+      loadProjectKMLs(sanitizedName);
     } else {
       showTempMessage(`Fehler: ${data.message}`, '#ff4444');
     }
