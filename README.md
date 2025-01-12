@@ -57,6 +57,10 @@ Die Anwendung basiert auf einer klassischen Client-Server-Architektur:
 - Enthält zwei Hauptbereiche:
   1. Kartenansicht: Primäre Interaktionsfläche für KML-Visualisierung
   2. Bedienpanel: Steuerungszentrale für alle Benutzerinteraktionen
+- Neue Dateien:
+  - styles.css: Zentrale Styling-Datei für das gesamte visuelle Erscheinungsbild
+  - uiUtils.js: Hilfsfunktionen für UI-Interaktionen und Updates
+  - messageUtils.js: Funktionen für Benachrichtigungen und Fehlermeldungen
 
 **Backend (PHP)**
 - Verwaltet die Projektstruktur im Dateisystem
@@ -64,6 +68,7 @@ Die Anwendung basiert auf einer klassischen Client-Server-Architektur:
 - Stellt REST-Schnittstellen bereit für:
   - Projektverwaltung
   - KML-Dateioperationen
+  - Benutzerverwaltung
 
 **Datenfluss**
 1. Benutzerinteraktionen im Frontend lösen Events aus
@@ -77,7 +82,10 @@ Das Bedienpanel ist die zentrale Steuerungseinheit und enthält:
 - Projekt-Dropdown (#project-selector)
 - KML-Listendarstellung (#kml-items)
 - Farbauswahl für KML-Layer
-- Benutzerauswahl (geplante Funktion)
+- Benutzerauswahl (#user-selector)
+  - Anzeige des aktuellen Benutzers (#username-display)
+  - Dropdown zur Benutzerauswahl
+  - Persistente Speicherung der Benutzereinstellungen
 
 ### Komponenteninteraktionen
 
@@ -109,6 +117,41 @@ kmlProcessor.js:createLayer()
   ↓
 // 4. UI Element erstellen
 uiUtils.js:createKMLListItem()
+```
+
+### Neue Dateistruktur
+
+```
+Befahrer_Mapper-1/
+├── User/
+│   ├── allgemein/
+│   │   └── user_allgemein.json
+│   ├── Andreas/
+│   │   └── user_Andreas.json
+│   ├── Lars/
+│   │   └── user_Lars.json
+│   ├── Leon/
+│   │   └── user_Leon.json
+│   ├── Michi/
+│   │   └── user_Michi.json
+│   ├── Nico/
+│   │   └── user_Nico.json
+│   ├── Thomas/
+│   │   └── user_Thomas.json
+│   ├── Tom/
+│   │   └── user_Tom.json
+│   └── Torsten/
+│       └── user_Thorsten.json
+├── contextMenu.js
+├── getKMLFiles.php
+├── getProjects.php
+├── index.html
+├── kmlProcessor.js
+├── main.js
+├── messageUtils.js
+├── README.md
+├── styles.css
+└── uiUtils.js
 ```
 
 ### Wichtige Code-Patterns
@@ -189,14 +232,16 @@ try {
 }
 ```
 
-## nächste Schritte:
-### Implementierung eines Benutzerverwaltungssystems
+## Implementierte Funktionen
 
-#### Funktionale Anforderungen
+### Benutzerverwaltungssystem
+
+#### Funktionen
 1. **Benutzerauswahl**
-   - Integration eines Dropdown-Menüs "Benutzer wählen" im Bedienpanel
+   - Dropdown-Menü zur Benutzerauswahl im Bedienpanel
    - Standardbenutzer "allgemein" bei nicht erfolgter Auswahl
    - Anzeige des aktiven Benutzers im Format "Aktueller Benutzer: [NAME]"
+   - Graue Textfarbe (50% #808080) für bessere Lesbarkeit
 
 2. **Persistente Benutzerkonfiguration**
    - Speicherung individueller KML-Konfigurationen:
@@ -206,9 +251,8 @@ try {
    - JSON-basierte Konfigurationsdateien im jeweiligen Benutzerverzeichnis
    - Automatische Wiederherstellung der Benutzereinstellungen bei erneutem Login
 
-#### Implementierungsplan
-**Phase 1: Grundlegende Benutzerintegration**
-- Verzeichnisstruktur: Anlage eines "User"-Ordners auf Projektebene
+#### Technische Umsetzung
+- Verzeichnisstruktur: "User"-Ordner auf Projektebene
 - Dynamische Erfassung vorhandener Benutzerverzeichnisse
 - Integration der Benutzerauswahl im Bedienpanel via Dropdown
-- Validierung der korrekten Funktionalität vor Implementierung weiterer Features
+- Validierung der korrekten Funktionalität

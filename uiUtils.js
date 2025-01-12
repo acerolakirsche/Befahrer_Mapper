@@ -128,16 +128,20 @@ function createKMLListItem(file, layerInfo, kmlItems, layers, map) {
       interactive: false
     }).addTo(map);
 
-    // Info-Label erstellen
-    const southWest = bounds.getSouthWest();
-    infoLabel = L.marker(southWest, {
+    // Info-Label auf der BoundingBox klebend erstellen
+    const centerTop = L.latLng(
+      bounds.getNorth(),
+      bounds.getCenter().lng
+    );
+    infoLabel = L.marker(centerTop, {
       icon: L.divIcon({
         className: 'bbox-info-label',
         html: `KML ${extractNumberFromFilename(layerInfo.name)}`,
-        iconSize: null
+        iconSize: [100, 18], // Breite 100px, Höhe 18px
+        iconAnchor: [50, 18] // Ankerpunkt in der Mitte der unteren Kante
       }),
       interactive: false,
-      offset: [10, -10] // Leichter Versatz nach rechts oben
+      offset: [0, -9] // Versatz nach oben um halbe Höhe des Labels
     }).addTo(map);
 
     return bbox;

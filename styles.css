@@ -331,15 +331,43 @@ option.new-project-option::before {
 }
 
 .bbox-info-label {
-  font-family: Arial, sans-serif;
-  font-size: 10px;
-  color: #333;
-  background: rgba(255, 255, 255, 0.8);
-  padding: 2px 4px;
-  border-radius: 3px;
-  pointer-events: none;
-  text-align: center;
-  white-space: nowrap;
-  transform: translate(-50%, 50%);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  /* Schriftart und -stil */
+  font-family: Arial, sans-serif; /* Verwendet Arial oder ähnliche serifenlose Schrift */
+  font-size: 20px !important; /* Größere Schrift mit höherer Priorität */
+  font-weight: bold; /* Fettschrift für bessere Lesbarkeit */
+  
+  /* Textfarbe */
+  color: #333; /* Dunkelgraue Schriftfarbe */
+  
+  /* Hintergrund mit Transparenz */
+  background: rgba(255, 255, 255, 0.95); /* Weißer Hintergrund mit 95% Deckkraft */
+  
+  /* Innenabstand */
+  padding: 4px 8px; /* 4px oben/unten, 8px links/rechts */
+  
+  /* Abgerundete Ecken */
+  border-radius: 3px; /* Leichte Rundung der Ecken */
+  
+  /* Interaktion */
+  pointer-events: none; /* Verhindert Mausinteraktionen mit dem Label */
+  
+  /* Textausrichtung */
+  text-align: center; /* Zentriert den Text horizontal */
+  
+  /* Zeilenumbruch */
+  white-space: nowrap; /* Verhindert automatischen Zeilenumbruch */
+  
+  /* Positionierung */
+  transform: translate(-50%, 50%); /* Zentriert das Label relativ zu seinem Ursprung */
+  
+  /* Schatteneffekt */
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Leichter Schatten für Tiefe */
+  
+  /* Flexbox-Layout */
+  display: inline-flex; /* Flexbox-Layout für einfache Zentrierung */
+  align-items: center; /* Zentriert den Inhalt vertikal */
+  justify-content: center; /* Zentriert den Inhalt horizontal */
+  
+  /* Mindestbreite */
+  min-width: 50px; /* Verhindert zu kleine Labels bei kurzem Text */
 }
