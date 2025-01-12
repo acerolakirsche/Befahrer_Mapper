@@ -35,12 +35,22 @@
     <!-- Hauptcontainer für die Karte -->
     <div id="map"></div>
 
-    <!-- Anzeige des aktuellen Projekts -->
-    <div id="selected-project-display"></div>
+    <!-- Anzeige von Benutzer und Projekt -->
+    <div id="selected-project-display">
+  <span id="username-display"></span>
+  <span id="projectname-display"></span>
+</div>
 
     <!-- Seitenleiste für KML-Verwaltung -->
     <div id="kml-list">
       <h3>KML-Dateien</h3>
+
+      <!-- Benutzerauswahl-Dropdown -->
+      <div class="user-selection">
+        <select id="user-selector">
+          <option value="">Benutzer wählen</option>
+        </select>
+      </div>
 
       <!-- Projektauswahl-Dropdown -->
       <select id="project-selector">

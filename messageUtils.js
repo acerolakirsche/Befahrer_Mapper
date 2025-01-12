@@ -97,6 +97,11 @@ const NACHRICHTEN = {
     FEHLER: {
         LADEN_FEHLGESCHLAGEN: 'Fehler beim Laden der Datei',
         NETZWERK_FEHLER: 'Netzwerkfehler - Bitte überprüfen Sie Ihre Verbindung',
-        UNBEKANNTER_FEHLER: 'Ein unerwarteter Fehler ist aufgetreten'
+        UNBEKANNTER_FEHLER: 'Ein unerwarteter Fehler ist aufgetreten',
+        BENUTZERDATEN_LADEN: 'Fehler beim Laden der Benutzerdaten',
+        BENUTZEREINSTELLUNGEN: 'Fehler beim Anwenden der Benutzereinstellungen'
+    },
+    BENUTZER: {
+        WECHSEL_ERFOLGREICH: (benutzername) => `Benutzer erfolgreich gewechselt zu ${benutzername}`
     }
 };

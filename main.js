@@ -77,6 +77,9 @@ const layers = []; // Speichert Informationen über alle KML-Layer
 const kmlItems = document.getElementById('kml-items'); // Container für KML-Listeneinträge
 const projectSelector = document.getElementById('project-selector');
 const selectedProjectDisplay = document.getElementById('selected-project-display');
+// Initiale Anzeige beim Laden der Seite
+document.getElementById('username-display').textContent = 'Benutzer: allgemein';
+document.getElementById('projectname-display').textContent = 'Befahrungsprojekt: leer';
 const newProjectForm = document.getElementById('new-project-form'); // Formular für neue Projekte
 let currentProject = null; // Aktuell ausgewähltes Projekt
 
@@ -105,7 +108,9 @@ async function loadProjectKMLs(projektName) {
   try {
     // Projektnamen sofort setzen
     currentProject = projektName;
-    selectedProjectDisplay.textContent = projektName;
+    const currentUser = userSelector.value;
+    document.getElementById('username-display').textContent = `Benutzer: ${currentUser}`;
+    document.getElementById('projectname-display').textContent = `Projekt: ${projektName}`;
 
     // KML-Dateien vom Server abrufen
     const fetchPath = `getKMLFiles.php?project=${encodeURIComponent(projektName)}`;
@@ -144,6 +149,86 @@ async function loadProjectKMLs(projektName) {
   }
 }
 
+// Benutzerverzeichnisse scannen und Dropdown befüllen
+const userSelector = document.getElementById('user-selector');
+
+/**
+ * Lädt verfügbare Benutzerverzeichnisse und füllt das Dropdown
+ */
+async function loadUserDirectories() {
+  try {
+    const response = await fetch('getProjects.php?type=users');
+    const users = await response.json();
+    
+    users.forEach(user => {
+      const option = document.createElement('option');
+      option.value = user;
+      option.textContent = user;
+      userSelector.appendChild(option);
+    });
+    
+    // Standardmäßig "allgemein" Benutzer auswählen
+    const generalUser = users.find(u => u === 'allgemein');
+    if (generalUser) {
+      userSelector.value = generalUser;
+      // Event auslösen, um Benutzerdaten zu laden
+      userSelector.dispatchEvent(new Event('change'));
+    }
+  } catch (error) {
+    console.error('Fehler beim Laden der Benutzer:', error);
+    showTempMessage(NACHRICHTEN.FEHLER.NETZWERK_FEHLER, '#ff4444');
+  }
+}
+
+// Benutzerverzeichnisse laden
+loadUserDirectories();
+
+// Event-Listener für Benutzerauswahl
+userSelector.addEventListener('change', function() {
+  const selectedUser = this.value;
+  if (selectedUser) {
+    // Anzeige sofort aktualisieren
+    document.getElementById('username-display').textContent = `Benutzer: ${selectedUser}`;
+    document.getElementById('projectname-display').textContent = `Befahrungsprojekt: ${currentProject || 'leer'}`;
+    
+    // Benutzerdaten vom Server laden
+    fetch(`User/${selectedUser}/user_${selectedUser}.json`)
+      .then(response => response.json())
+      .then(userData => {
+        // Benutzerspezifische Einstellungen anwenden
+        if (userData.settings) {
+          applyUserSettings(userData.settings);
+        }
+      })
+      .catch(error => {
+        console.error('Fehler beim Laden der Benutzerdaten:', error);
+        showTempMessage(NACHRICHTEN.FEHLER.BENUTZERDATEN_LADEN, '#ff4444');
+      });
+  }
+});
+
+/**
+ * Wendet benutzerspezifische Einstellungen an
+ * @param {Object} settings - Benutzereinstellungen
+ */
+function applyUserSettings(settings) {
+  // Kartenstil anpassen
+  if (settings.mapStyle) {
+    map.setStyle(settings.mapStyle);
+  }
+  
+  // Standardprojekt laden
+  if (settings.defaultProject) {
+    projectSelector.value = settings.defaultProject;
+    loadProjectKMLs(settings.defaultProject);
+  }
+  
+  // UI-Einstellungen anwenden
+  if (settings.ui) {
+    document.body.classList.toggle('dark-mode', settings.ui.darkMode);
+  }
+}
+
 // Projekte vom Server abrufen und Dropdown befüllen
 fetch('getProjects.php')
   .then(response => response.json())
@@ -167,14 +252,44 @@ fetch('getProjects.php')
   });
 
 // Event-Listener für die Projektauswahl
-projectSelector.addEventListener('change', function() {
+projectSelector.addEventListener('change', async function() {
   const selectedProject = this.value;
   const newProjectForm = document.getElementById('new-project-form');
+  const currentUser = userSelector.value;
   
   if (selectedProject === 'neues Projekt') {
     newProjectForm.style.display = 'flex';
   } else if (selectedProject) {
     newProjectForm.style.display = 'none';
+    
+    // Projektstatus in Benutzer-JSON speichern
+    try {
+      const userFilePath = `User/${currentUser}/user_${currentUser}.json`;
+      
+      // Aktuelle Benutzerdaten laden
+      const response = await fetch(userFilePath);
+      const userData = await response.json();
+      
+      // Projektstatus aktualisieren
+      userData.settings = userData.settings || {};
+      userData.settings.lastProject = selectedProject;
+      
+      // Aktualisierte Daten speichern
+      await fetch('saveUserSettings.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `user=${encodeURIComponent(currentUser)}&data=${encodeURIComponent(JSON.stringify(userData))}`
+      });
+      
+      // Debug-Ausgabe in Konsole
+      console.log(`Projektstatus gespeichert: ${selectedProject} für Benutzer ${currentUser}`);
+    } catch (error) {
+      console.error('Fehler beim Speichern des Projektstatus:', error);
+    }
+    
+    // Projekt laden
     loadProjectKMLs(selectedProject);
   } else {
     newProjectForm.style.display = 'none';

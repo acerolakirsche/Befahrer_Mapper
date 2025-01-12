@@ -43,12 +43,25 @@ body {
   left: 50%;
   transform: translateX(-50%); /* Zentriert horizontal */
   padding: 10px 20px;
-  background-color: rgba(255, 255, 255, 0.8); /* Halbtransparenter Hintergrund */
+  background-color: rgba(255, 255, 255, 0.5); /* 50% Transparenz */
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Subtiler Schatten */
   z-index: 1000; /* Über der Karte */
   font-size: 1.2em;
   font-weight: bold;
+  font-family: Arial, sans-serif; /* Serifenlose Schrift */
+}
+
+#username-display::after {
+  content: " ";
+  margin-right: 8em; /* Größerer Abstand zwischen Benutzer und Projekt */
+  display: inline-block;
+}
+
+#username-display,
+#projectname-display {
+  display: inline-block;
+  color: #808080;
 }
 
 /* ============================
@@ -73,6 +86,18 @@ body {
 /* Projekt-Auswahlmenü
    Dropdown für verschiedene Befahrungsprojekte */
 #project-selector {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 1em;
+}
+
+/* User-Auswahlmenü 
+   Soll dem Projekt-Dropdown entsprechen */
+#user-selector {
   width: 100%;
   padding: 8px;
   margin-bottom: 10px;

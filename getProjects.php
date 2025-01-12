@@ -25,10 +25,46 @@
  * - Keine Ausführung von Benutzer-Input
  */
 
-// Pfad zum Hauptverzeichnis der Befahrungsprojekte
+// Pfade zu den Verzeichnissen
 $baseDir = dirname(__FILE__);
 $projectDir = $baseDir . '/Befahrungsprojekte';
+$userDir = $baseDir . '/User';
 $projects = [];
+$users = [];
+
+// Funktion zum Lesen von Benutzerverzeichnissen
+function getUsers($userDir) {
+    $users = [];
+    $generalUser = null;
+    
+    if (is_dir($userDir)) {
+        $items = scandir($userDir);
+        foreach ($items as $item) {
+            if ($item != '.' && $item != '..' && is_dir($userDir . '/' . $item)) {
+                if ($item === 'allgemein') {
+                    $generalUser = $item;
+                } else {
+                    $users[] = $item;
+                }
+            }
+        }
+    }
+    
+    // Allgemein immer an erster Stelle
+    if ($generalUser !== null) {
+        array_unshift($users, $generalUser);
+    }
+    
+    return $users;
+}
+
+// Prüfen ob Benutzerliste angefordert wurde
+if (isset($_GET['type']) && $_GET['type'] === 'users') {
+    $users = getUsers($userDir);
+    header('Content-Type: application/json');
+    echo json_encode($users);
+    exit;
+}
 
 // Funktion zum Überprüfen und Erstellen des Basisordners
 function ensureBaseDirectoryExists() {

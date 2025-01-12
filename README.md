@@ -1,17 +1,17 @@
 # Befahrer Mapper
 
 ## Übersicht
-Der Befahrer Mapper ist eine spezialisierte Webanwendung für die Planung und Koordination von Messfahrten im Stil von Google Street View. Die App wurde entwickelt, um Befahrungsteams eine einfache, intuitive Alternative zu komplexen GIS-Systemen wie QGis zu bieten.
+Der Befahrer Mapper ist eine webbasierte Anwendung zur effizienten Planung und Koordination von Messfahrten nach dem Prinzip von Google Street View. Die Anwendung bietet Befahrungsteams eine intuitive Alternative zu komplexen geografischen Informationssystemen wie QGIS.
 
 ### Hauptmerkmale
-- **Browserbasiert & Überall verfügbar**: Läuft auf STRATO Webspace und ist von überall ohne Installation zugänglich
-- **Einfache Bedienung**: Optimiert für nicht-technische Nutzer
+- **Browserbasierte Verfügbarkeit**: Gehostet auf STRATO Webspace, ermöglicht direkten Zugriff ohne Installation
+- **Intuitive Benutzeroberfläche**: Optimiert für effiziente Bedienung durch eine zentrale Kartenansicht und ein strukturiertes Bedienpanel
 - **Projektverwaltung**: Erstellen und Verwalten von separaten Befahrungsprojekten
-- **Drag & Drop KML-Import**: Schnelles Hinzufügen von Befahrungsabschnitten
+- **Drag & Drop KML-Import**: Schnelles Hinzufügen von Befahrungsabschnitten (so genannte KML Files, oder kurz: KMLs)
     - **Visuelle Hervorhebung**: 
       - Doppelte Linienführung für bessere Sichtbarkeit
       - Farbkodierung für verschiedene Teams/Abschnitte
-      - Intelligente Selektierung mit visueller Hervorhebung
+      - Intelligente Selektierung mit visueller Hervorhebung im Bedienpanel:
         - Einzelauswahl: Klicken ohne Modifikatortaste
         - Mehrfachauswahl: Strg/Cmd + Klick
         - Bereichsauswahl: Shift + Klick
@@ -44,99 +44,171 @@ Der Befahrer Mapper ist eine spezialisierte Webanwendung für die Planung und Ko
       - Sofortige Verfügbarkeit des neuen Projekts in der Auswahlliste
       - Verbesserte visuelle Darstellung der "neues Projekt" Option mit grünem Plus-Zeichen
 
-## Technische Dokumentation
+## Technische Dokumentation für LLMs
 
-### Dateistruktur und Komponenten
+### Architekturübersicht
 
-#### `index.html`
-- **Hauptfunktion**: Zentrale Benutzeroberfläche und Struktur der Anwendung
-- **Wichtige Elemente**:
-  - Kartendarstellung (`#map`)
-  - Projekt-Auswahl (`#project-selector`) mit optimierter CSS-Klassenstruktur
-  - KML-Listenansicht (`#kml-items`)
-  - Verschiedene UI-Kontrollelemente
+#### Kernkomponenten und Datenfluss
 
-#### `main.js`
-- **Hauptfunktion**: Zentrale Anwendungslogik und Kartensteuerung
-- **Kernfunktionalitäten**:
-  - Karteninitialisierung und Grundeinstellungen
-  - Projekt-Management (`loadProjectKMLs`)
-  - Drag & Drop-Verarbeitung
-  - Layer-Management und Visualisierung
-  - Automatische Kartenfokussierung auf Projektbereiche
+Die Anwendung basiert auf einer klassischen Client-Server-Architektur:
 
-#### `kmlProcessor.js`
-- **Hauptfunktion**: Verarbeitung und Verwaltung von KML-Dateien
-- **Kernfunktionalitäten**:
-  - KML-Datei-Parsing und Konvertierung
-  - Duplikatserkennung
-  - Layer-Erstellung und Styling
-  - Extraktion von Abschnittsnummern
+**Frontend (Browser)**
+- Zentrale Komponente ist index.html als UI-Root
+- Enthält zwei Hauptbereiche:
+  1. Kartenansicht: Primäre Interaktionsfläche für KML-Visualisierung
+  2. Bedienpanel: Steuerungszentrale für alle Benutzerinteraktionen
 
-#### `contextMenu.js`
-- **Hauptfunktion**: Kontextmenü-Funktionalität für Karteninteraktionen
-- **Kernfunktionalitäten**:
-  - Rechtsklick-Menü
-  - Kontextabhängige Aktionen
-  - Layer-spezifische Operationen
-  - Zoom-Funktionen:
-    * Zoom auf spezifische KML-Grenzen
-    * Zoom auf kombinierte Layer-Grenzen
-    * Zoom auf Deutschland (festgelegte Koordinaten und Zoomstufe)
+**Backend (PHP)**
+- Verwaltet die Projektstruktur im Dateisystem
+- Organisiert KML-Dateien in projektspezifischen Verzeichnissen
+- Stellt REST-Schnittstellen bereit für:
+  - Projektverwaltung
+  - KML-Dateioperationen
 
-#### `styles.css`
-- **Hauptfunktion**: Visuelle Gestaltung und Benutzeroberfläche
-- **Neue Features**:
-  - Optimierte CSS-Klassen für Dropdown-Menüs
-  - Verbesserte Browser-Kompatibilität
-  - Konsistente Farbgebung und Formatierung
-  - ::before Pseudo-Elemente für Icons
+**Datenfluss**
+1. Benutzerinteraktionen im Frontend lösen Events aus
+2. Events führen zu REST-API-Aufrufen an Backend-Endpunkte
+3. Backend verarbeitet Anfragen und manipuliert Dateisystem
+4. Antworten werden ans Frontend zurückgeliefert
+5. Frontend aktualisiert UI-Zustand entsprechend
 
-### Wichtige Funktionen im Detail
+#### Bedienpanel Struktur
+Das Bedienpanel ist die zentrale Steuerungseinheit und enthält:
+- Projekt-Dropdown (#project-selector)
+- KML-Listendarstellung (#kml-items)
+- Farbauswahl für KML-Layer
+- Benutzerauswahl (geplante Funktion)
 
-#### Projekt-Management (`main.js`, `getProjects.php`)
+### Komponenteninteraktionen
+
+#### 1. Projekt-Management Flow
 ```javascript
-async function loadProjectKMLs(projektName)
+// 1. Projekt laden
+main.js:loadProjectKMLs(projektName)
+  ↓
+// 2. KML-Dateien abrufen
+getKMLFiles.php (GET)
+  ↓
+// 3. KML verarbeiten
+kmlProcessor.js:processKMLFile()
+  ↓
+// 4. UI aktualisieren
+uiUtils.js:updateKMLList()
 ```
-- Lädt alle KML-Dateien eines Projekts
-- Bereinigt bestehende Layer
-- Verarbeitet neue KML-Dateien
-- Fokussiert die Karte automatisch auf den relevanten Bereich
-- Parameter:
-  - `projektName`: Name des zu ladenden Projekts
 
+#### 2. KML-Verarbeitung Flow
 ```javascript
-// Projekterstellung via POST-Request
-fetch('getProjects.php', {
-  method: 'POST',
-  body: 'action=create&projectName=projektName'
-})
+// 1. Drag & Drop Event
+main.js:handleDrop()
+  ↓
+// 2. KML zu GeoJSON
+kmlProcessor.js:convertKMLtoGeoJSON()
+  ↓
+// 3. Layer erstellen
+kmlProcessor.js:createLayer()
+  ↓
+// 4. UI Element erstellen
+uiUtils.js:createKMLListItem()
 ```
-- Erstellt ein neues Befahrungsprojekt
-- Erzeugt automatisch die erforderliche Ordnerstruktur
-- Erstellt einen KML-Files Unterordner für Befahrungsdaten
-- Validiert Projektnamen auf erlaubte Zeichen
-- Verhindert Duplikate von Projektnamen
 
-#### KML-Verarbeitung (`kmlProcessor.js`)
+### Wichtige Code-Patterns
+
+#### 1. Event Handling
 ```javascript
-function processKMLFile(file, map, kmlItems, layers)
+// Beispiel aus main.js
+document.addEventListener('drop', async (event) => {
+    event.preventDefault();
+    const files = Array.from(event.dataTransfer.files);
+    for (const file of files) {
+        await processKMLFile(file, map, kmlItems, layers);
+    }
+});
 ```
-- Verarbeitet einzelne KML-Dateien
-- Erstellt Layer und Visualisierungen
-- Fügt Einträge zur KML-Liste hinzu
-- Parameter:
-  - `file`: Die zu verarbeitende KML-Datei
-  - `map`: Leaflet-Kartenobjekt
-  - `kmlItems`: Container für KML-Listeneinträge
-  - `layers`: Array für Layer-Verwaltung
 
-### Technischer Stack
-- **Frontend**: 
-  - HTML5, CSS3, JavaScript
-  - Leaflet.js für Kartendarstellung
-  - toGeoJSON für KML-Verarbeitung
-- **Backend**: 
-  - PHP für Dateisystem-Operationen
-- **Hosting**: 
-  - STRATO Webspace
+#### 2. Layer Management
+```javascript
+// Beispiel aus kmlProcessor.js
+function createLayer(geoJSON, style) {
+    return L.geoJSON(geoJSON, {
+        style: style,
+        onEachFeature: (feature, layer) => {
+            layer.on({
+                mouseover: highlightFeature,
+                mouseout: resetHighlight,
+                click: selectFeature
+            });
+        }
+    });
+}
+```
+
+#### 3. UI Updates
+```javascript
+// Beispiel aus uiUtils.js
+function updateKMLList(kmlItem, layer) {
+    const listItem = document.createElement('div');
+    listItem.className = 'kml-item';
+    listItem.dataset.layerId = layer._leaflet_id;
+    
+    // Synchronisiere UI-Status mit Layer
+    layer.on('click', () => {
+        listItem.classList.toggle('selected');
+    });
+    
+    return listItem;
+}
+```
+
+### API-Endpunkte
+
+#### getProjects.php
+```
+GET  / - Liste aller Projekte
+POST / - Neues Projekt erstellen
+Body: action=create&projectName={name}
+```
+
+#### getKMLFiles.php
+```
+GET /?project={name} - KML-Dateien eines Projekts
+POST / - KML-Datei speichern
+Body: FormData mit file und project
+```
+
+### Fehlerbehandlung
+```javascript
+// Beispiel für konsistente Fehlerbehandlung
+try {
+    await loadProjectKMLs(projektName);
+} catch (error) {
+    messageUtils.show({
+        type: 'error',
+        message: `Fehler beim Laden des Projekts: ${error.message}`,
+        duration: 5000
+    });
+}
+```
+
+## nächste Schritte:
+### Implementierung eines Benutzerverwaltungssystems
+
+#### Funktionale Anforderungen
+1. **Benutzerauswahl**
+   - Integration eines Dropdown-Menüs "Benutzer wählen" im Bedienpanel
+   - Standardbenutzer "allgemein" bei nicht erfolgter Auswahl
+   - Anzeige des aktiven Benutzers im Format "Aktueller Benutzer: [NAME]"
+
+2. **Persistente Benutzerkonfiguration**
+   - Speicherung individueller KML-Konfigurationen:
+     - Farbzuweisungen
+     - Sichtbarkeitsstatus
+     - Zuletzt gewähltes Projekt
+   - JSON-basierte Konfigurationsdateien im jeweiligen Benutzerverzeichnis
+   - Automatische Wiederherstellung der Benutzereinstellungen bei erneutem Login
+
+#### Implementierungsplan
+**Phase 1: Grundlegende Benutzerintegration**
+- Verzeichnisstruktur: Anlage eines "User"-Ordners auf Projektebene
+- Dynamische Erfassung vorhandener Benutzerverzeichnisse
+- Integration der Benutzerauswahl im Bedienpanel via Dropdown
+- Validierung der korrekten Funktionalität vor Implementierung weiterer Features
