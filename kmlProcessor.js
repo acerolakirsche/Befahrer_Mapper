@@ -118,11 +118,21 @@ function processKMLFile(file, map, kmlItems, layers) {
         pointToLayer: () => null // Punktfeatures überspringen
       }).addTo(map);
 
+      // Layer-Informationen speichern
+      const layerInfo = {
+        name: file.name,
+        mainLayer: null,
+        shadowLayer: null,
+        checkbox: null,
+        color: '#ff0000', // Standardfarbe
+        isSelected: false
+      };
+
       // Haupt-Visualisierungslayer erstellen
       const mainLayer = L.geoJSON(geojson, {
         style: {
           color: '#ff0000', // Standard: Rot
-          weight: mainLineWeight
+          weight: mainLineWeight * (layerInfo.isSelected ? 1.7 : 1)
         },
         onEachFeature: (feature, layer) => {
           // Popup hinzufügen, wenn Feature einen Namen hat
@@ -133,14 +143,9 @@ function processKMLFile(file, map, kmlItems, layers) {
         pointToLayer: () => null // Punktfeatures überspringen
       }).addTo(map);
 
-      // Layer-Informationen speichern
-      const layerInfo = {
-        name: file.name,
-        mainLayer,
-        shadowLayer,
-        checkbox: null,
-        color: '#ff0000' // Standardfarbe
-      };
+      // Layer-Referenzen aktualisieren
+      layerInfo.mainLayer = mainLayer;
+      layerInfo.shadowLayer = shadowLayer;
       layers.push(layerInfo);
 
       // Listeneintrag für die KML-Datei erstellen
@@ -175,23 +180,28 @@ function processKMLFile(file, map, kmlItems, layers) {
             pointToLayer: () => null
           }).addTo(map);
 
+          // Layer-Informationen speichern
+          const layerInfo = {
+            name: file.name,
+            mainLayer: null,
+            shadowLayer: null,
+            color: '#ff0000', // Standardfarbe
+            isSelected: false
+          };
+
           // Haupt-Layer erstellen
           const mainLayer = L.geoJSON(geojson, {
             style: {
               color: '#ff0000',
-              weight: mainLineWeight,
+              weight: mainLineWeight * (layerInfo.isSelected ? 1.7 : 1),
               opacity: 0.8
             },
             pointToLayer: () => null
           }).addTo(map);
 
-          // Layer-Informationen speichern
-          const layerInfo = {
-            name: file.name,
-            mainLayer: mainLayer,
-            shadowLayer: shadowLayer,
-            color: '#ff0000'
-          };
+          // Layer-Referenzen aktualisieren
+          layerInfo.mainLayer = mainLayer;
+          layerInfo.shadowLayer = shadowLayer;
           layers.push(layerInfo);
 
           // Listeneintrag erstellen

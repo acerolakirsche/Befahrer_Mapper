@@ -109,14 +109,36 @@ function createKMLListItem(file, layerInfo, kmlItems, layers, map) {
   kmlItem.appendChild(deleteIcon);
 
   // Hover-Effekt für KML-Hervorhebung
-  kmlItem.addEventListener('mouseenter', () => {
-    // Setze Deckkraft des Hauptlayers auf 0%
-    layerInfo.mainLayer.setStyle({ opacity: 0 });
+    kmlItem.addEventListener('mouseenter', () => {
+    if (selectedKMLs.includes(layerInfo)) {
+      // Selektiert mit Hover: 2.4-fache Stärke, volle Deckkraft
+      layerInfo.shadowLayer.setStyle({ 
+        opacity: 1.0,
+        weight: shadowLineWeight * 2.4
+      });
+    } else {
+      // Unselektiert mit Hover: 1.8-fache Stärke, volle Deckkraft
+      layerInfo.shadowLayer.setStyle({ 
+        opacity: 1.0,
+        weight: shadowLineWeight * 1.8
+      });
+    }
   });
 
   kmlItem.addEventListener('mouseleave', () => {
-    // Setze Deckkraft des Hauptlayers zurück auf 100%
-    layerInfo.mainLayer.setStyle({ opacity: 1 });
+    if (selectedKMLs.includes(layerInfo)) {
+      // Selektiert ohne Hover: 1.8-fache Stärke, 60% Deckkraft
+      layerInfo.shadowLayer.setStyle({ 
+        opacity: 0.6,
+        weight: shadowLineWeight * 1.8
+      });
+    } else {
+      // Unselektiert ohne Hover: Grundstärke, 60% Deckkraft
+      layerInfo.shadowLayer.setStyle({ 
+        opacity: 0.6,
+        weight: shadowLineWeight * 1
+      });
+    }
   });
 
   // Click-Handler für Auswahl-Funktionalität
@@ -145,7 +167,7 @@ function createKMLListItem(file, layerInfo, kmlItems, layers, map) {
     });
   });
 
-  kmlItem.addEventListener('click', (e) => {
+      kmlItem.addEventListener('click', (e) => {
     e.stopPropagation();
 
     if (e.metaKey || e.ctrlKey) {
@@ -164,7 +186,7 @@ function createKMLListItem(file, layerInfo, kmlItems, layers, map) {
         kmlItem.classList.add('selected');
         layerInfo.shadowLayer.setStyle({ 
           opacity: 1.0,
-          weight: shadowLineWeight * 2
+          weight: shadowLineWeight * 1.8
         });
       }
     } else if (e.shiftKey) {
@@ -181,7 +203,7 @@ function createKMLListItem(file, layerInfo, kmlItems, layers, map) {
         kmlItem.classList.add('selected');
         layerInfo.shadowLayer.setStyle({ 
           opacity: 1.0,
-          weight: shadowLineWeight * 2
+          weight: shadowLineWeight * 1.8
         });
       } else {
         // Bereich auswählen
@@ -194,7 +216,7 @@ function createKMLListItem(file, layerInfo, kmlItems, layers, map) {
             item.classList.add('selected');
             itemLayer.shadowLayer.setStyle({ 
               opacity: 1.0,
-              weight: shadowLineWeight * 2
+              weight: shadowLineWeight * 1.8
             });
           } else {
             item.classList.remove('selected');
@@ -225,7 +247,7 @@ function createKMLListItem(file, layerInfo, kmlItems, layers, map) {
       kmlItem.classList.add('selected');
       layerInfo.shadowLayer.setStyle({ 
         opacity: 1.0,
-        weight: shadowLineWeight * 2
+        weight: shadowLineWeight * 1.8
       });
     }
   });
