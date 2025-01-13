@@ -102,16 +102,6 @@ function createKMLListItem(file, layerInfo, kmlItems, layers, map) {
     // Entfernt beide Layer und den Listeneintrag
     map.removeLayer(layerInfo.mainLayer);
     map.removeLayer(layerInfo.shadowLayer);
-    // Entfernt die Bounding Box falls vorhanden
-    if (boundingBoxLayer) {
-      map.removeLayer(boundingBoxLayer);
-      boundingBoxLayer = null;
-    }
-    // Entfernt das Infolabel falls vorhanden
-    if (infoLabel) {
-      map.removeLayer(infoLabel);
-      infoLabel = null;
-    }
     kmlItems.removeChild(kmlItem);
     layers.splice(layers.indexOf(layerInfo), 1);
     selectedKMLs = selectedKMLs.filter(selected => selected !== layerInfo);
@@ -119,52 +109,14 @@ function createKMLListItem(file, layerInfo, kmlItems, layers, map) {
   kmlItem.appendChild(deleteIcon);
 
   // Hover-Effekt für KML-Hervorhebung
-  // Zeigt eine Bounding-Box um die KML auf der Karte
-  let boundingBoxLayer = null;
-  let infoLabel = null;
-
-  function createBoundingBox(layer) {
-    const bounds = layer.getBounds();
-    const bbox = L.rectangle(bounds, {
-      color: '#000000',
-      weight: 10,
-      opacity: 0.5,
-      fill: false,
-      interactive: false
-    }).addTo(map);
-
-    // Info-Label auf der BoundingBox klebend erstellen
-    const centerTop = L.latLng(
-      bounds.getNorth(),
-      bounds.getCenter().lng
-    );
-    infoLabel = L.marker(centerTop, {
-      icon: L.divIcon({
-        className: 'bbox-info-label',
-        html: `KML ${extractNumberFromFilename(layerInfo.name)}`,
-        iconSize: [100, 18], // Breite 100px, Höhe 18px
-        iconAnchor: [50, 18] // Ankerpunkt in der Mitte der unteren Kante
-      }),
-      interactive: false,
-      offset: [0, -9] // Versatz nach oben um halbe Höhe des Labels
-    }).addTo(map);
-
-    return bbox;
-  }
-
   kmlItem.addEventListener('mouseenter', () => {
-    boundingBoxLayer = createBoundingBox(layerInfo.mainLayer);
+    // Setze Deckkraft des Hauptlayers auf 0%
+    layerInfo.mainLayer.setStyle({ opacity: 0 });
   });
 
   kmlItem.addEventListener('mouseleave', () => {
-    if (boundingBoxLayer) {
-      map.removeLayer(boundingBoxLayer);
-      boundingBoxLayer = null;
-    }
-    if (infoLabel) {
-      map.removeLayer(infoLabel);
-      infoLabel = null;
-    }
+    // Setze Deckkraft des Hauptlayers zurück auf 100%
+    layerInfo.mainLayer.setStyle({ opacity: 1 });
   });
 
   // Click-Handler für Auswahl-Funktionalität
