@@ -95,6 +95,15 @@ body {
   font-size: 1em;
 }
 
+/* Labels für Dropdown-Menüs */
+.dropdown-label {
+  font-family: Arial, sans-serif;
+  font-size: 10px;
+  color: #808080;
+  margin-bottom: 4px;
+  display: block;
+}
+
 /* User-Auswahlmenü 
    Soll dem Projekt-Dropdown entsprechen */
 #user-selector {

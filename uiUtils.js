@@ -97,7 +97,7 @@ function createKMLListItem(file, layerInfo, kmlItems, layers, map) {
   // Ermöglicht das Entfernen einzelner KMLs
   const deleteIcon = document.createElement('i');
   deleteIcon.className = 'fas fa-trash delete-icon';
-  deleteIcon.onclick = (e) => {
+    deleteIcon.onclick = (e) => {
     e.stopPropagation(); // Verhindert Auslösen der Listenauswahl
     // Entfernt beide Layer und den Listeneintrag
     map.removeLayer(layerInfo.mainLayer);
@@ -106,6 +106,11 @@ function createKMLListItem(file, layerInfo, kmlItems, layers, map) {
     if (boundingBoxLayer) {
       map.removeLayer(boundingBoxLayer);
       boundingBoxLayer = null;
+    }
+    // Entfernt das Infolabel falls vorhanden
+    if (infoLabel) {
+      map.removeLayer(infoLabel);
+      infoLabel = null;
     }
     kmlItems.removeChild(kmlItem);
     layers.splice(layers.indexOf(layerInfo), 1);
