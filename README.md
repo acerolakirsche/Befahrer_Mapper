@@ -17,9 +17,21 @@ Der Befahrer Mapper ist eine webbasierte Anwendung zur effizienten Planung und K
         - Bereichsauswahl: Shift + Klick
         - Visuelle Hervorhebung durch blaue Hinterlegung
         - Synchronisierte Hervorhebung auf der Karte
-      - Bounding Box beim Hovern über KML-Einträge
-        - Präzise positionierte Info-Labels mit Schatteneffekt für bessere Lesbarkeit
-      - Automatische Entfernung der Bounding Box beim Löschen
+      - Verfeinertes optisches Feedback für Selektionen und Hovering:
+        - Schattenlayer-Richtlinie:
+          - Grundsätzlich: const shadowLineWeight = mainLineWeight * 2
+          - Bei unselektiertem Zustand und ohne Mousehover Hervorhebung:
+            opacity: 0.6, weight: shadowLineWeight * 1
+          - Bei selektiertem Zustand und ohne Mousehover Hervorhebung:
+            opacity: 0.6, weight: shadowLineWeight * 1.8
+          - Bei selektiertem Zustand und mit Mousehover Hervorhebung:
+            opacity: 1.0, weight: shadowLineWeight * 2.4
+          - Bei unselektiertem Zustand und mit Mousehover Hervorhebung:
+            opacity: 1.0, weight: shadowLineWeight * 1.8
+        - Farbauswahl über Kontextmenü:
+          - Rechtsklick auf KML-Layer öffnet Kontextmenü
+          - Farbpalette zur individuellen Anpassung der Layer-Farben
+          - Ausgewählte Farben werden persistent gespeichert
 - **Automatischer Fokus**: Automatische Zentrierung auf relevante Kartenabschnitte
 - **Verbesserte Benutzeroberfläche**:
   - Optimierte Dropdown-Menüs mit klarer visueller Hierarchie
