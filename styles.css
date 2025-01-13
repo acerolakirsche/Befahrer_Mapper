@@ -241,29 +241,6 @@ body {
 }
 
 /* ============================
-   Farbauswahl
-   ============================ */
-
-/* Container für Farbauswahlboxen */
-#color-picker {
-  display: flex;
-  gap: 5px;
-  margin-bottom: 10px;
-}
-
-/* Einzelne Farbauswahlbox */
-.color-box {
-  width: 20px;
-  height: 20px;
-  border: 1px solid #ccc;
-  cursor: pointer;
-}
-
-.color-box:hover {
-  border-color: #000; /* Dunklerer Rahmen beim Hover */
-}
-
-/* ============================
    Textformatierung
    ============================ */
 
@@ -302,18 +279,44 @@ body {
   box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
   border-radius: 3px;
   min-width: 180px;
+  padding: 8px;
 }
 
 /* Menüeinträge im Kontextmenü */
 #kml-context-menu div {
   padding: 8px 12px;
   cursor: pointer;
-  transition: background-color 0.2s ease; /* Sanfter Übergang */
+  transition: background-color 0.2s ease;
   color: #333;
 }
 
 #kml-context-menu div:hover {
-  background-color: #f5f5f5; /* Heller Hintergrund beim Hover */
+  background-color: #f5f5f5;
+}
+
+/* Farbauswahl-Sektion */
+.context-menu-colors {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+  margin: 8px 0;
+  padding: 8px 0;
+  border-top: 1px solid #eee;
+}
+
+/* Einzelne Farbkästchen */
+.context-menu-color {
+  width: 24px;
+  height: 24px;
+  border-radius: 3px;
+  cursor: pointer;
+  border: 1px solid #ddd;
+  transition: transform 0.1s ease;
+}
+
+.context-menu-color:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 5px rgba(0,0,0,0.2);
 }
 
 /* Stile für die "neues Projekt" Option */

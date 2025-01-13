@@ -85,6 +85,64 @@ function createContextMenu(e, layerInfo, map, layers) {
     });
   });
 
+  // Add color selection section
+  const colorSection = document.createElement('div');
+  colorSection.className = 'context-menu-colors';
+  
+  // Define available colors
+  const colors = [
+    '#FF0000', '#00FF00', '#0000FF', '#FFFF00',
+    '#FF00FF', '#00FFFF', '#FFA500', '#800080'
+  ];
+  
+  // Create color boxes
+  colors.forEach(color => {
+    const colorBox = document.createElement('div');
+    colorBox.className = 'context-menu-color';
+    colorBox.style.backgroundColor = color;
+    
+      // Add click handler for color selection
+      colorBox.addEventListener('click', () => {
+        // Check if clicked KML is selected
+        const isSelected = selectedKMLs.includes(layerInfo);
+        
+        // If clicked KML is selected, update all selected KMLs
+        if (isSelected) {
+          selectedKMLs.forEach(selectedLayer => {
+            // Update layer color on map
+            selectedLayer.mainLayer.setStyle({ color });
+            
+            // Update color stripe in KML list
+            const kmlItem = document.querySelector(`[data-name="${selectedLayer.name}"]`);
+            if (kmlItem) {
+              const stripe = kmlItem.querySelector('.color-stripe');
+              if (stripe) {
+                stripe.style.backgroundColor = color;
+              }
+            }
+          });
+        } else {
+          // If clicked KML is not selected, update only this one
+          layerInfo.mainLayer.setStyle({ color });
+          const kmlItem = document.querySelector(`[data-name="${layerInfo.name}"]`);
+          if (kmlItem) {
+            const stripe = kmlItem.querySelector('.color-stripe');
+            if (stripe) {
+              stripe.style.backgroundColor = color;
+            }
+          }
+        }
+        
+        // Close menu after selection
+        contextMenu.remove();
+      });
+    
+    colorSection.appendChild(colorBox);
+  });
+
+  // Add color section to menu
+  contextMenu.appendChild(colorSection);
+
   // Add the context menu to the document
   document.body.appendChild(contextMenu);
 
