@@ -5,7 +5,7 @@ Der Befahrer Mapper ist eine webbasierte Anwendung zur effizienten Planung und K
 
 ### Hauptmerkmale
 - **Browserbasierte Verfügbarkeit**: Gehostet auf STRATO Webspace, ermöglicht direkten Zugriff ohne Installation
-- **Intuitive Benutzeroberfläche**: Optimiert für effiziente Bedienung durch eine zentrale Kartenansicht und ein strukturiertes Bedienpanel
+- **Intuitive Benutzeroberfläche**: Optimiert für effiziente Bedienung durch eine zentrale Kartenansicht und ein strukturiertes Bedienpanel!
 - **Projektverwaltung**: Erstellen und Verwalten von separaten Befahrungsprojekten
 - **Drag & Drop KML-Import**: Schnelles Hinzufügen von Befahrungsabschnitten (so genannte KML Files, oder kurz: KMLs)
     - **Visuelle Hervorhebung**: 
