@@ -26,6 +26,15 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
+// Event-Listener für Mouse-Hover über KML-Layer
+map.on('layeradd', function(e) {
+  if (e.layer && e.layer.feature && e.layer.feature.id) {
+    e.layer.on('mouseover', function() {
+      console.log('Feature ID:', e.layer.feature.id);
+    });
+  }
+});
+
 // Drag & Drop Bereich für die Karte einrichten
 const dropArea = document.getElementById('map');
 
@@ -120,7 +129,20 @@ async function loadProjectKMLs(projektName) {
     // Jede KML-Datei verarbeiten
     for (const fileName of kmlFiles) {
       const file = { name: fileName };
-      processKMLFile(file, map, kmlItems, layers);
+      const layerInfo = processKMLFile(file, map, kmlItems, layers);
+      
+      // Event-Listener für ShadowLayer hinzufügen
+      if (layerInfo && layerInfo.shadowLayer) {
+        map.on('layeradd', function(e) {
+          if (e.layer === layerInfo.shadowLayer) {
+            e.layer.eachLayer(layer => {
+              if (layer.feature && layer.feature.id) {
+                console.log('KML ShadowLayer - Feature ID:', layer.feature.id);
+              }
+            });
+          }
+        });
+      }
     }
 
     // Kurz warten, bis die Layer vollständig geladen sind

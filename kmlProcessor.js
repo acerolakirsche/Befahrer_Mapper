@@ -129,16 +129,48 @@ function processKMLFile(file, map, kmlItems, layers) {
       };
 
       // Haupt-Visualisierungslayer erstellen
+      console.log('Erstelle GeoJSON Layer für:', file.name);
+      console.log('GeoJSON Daten:', geojson);
+      
       const mainLayer = L.geoJSON(geojson, {
         style: {
           color: '#ff0000', // Standard: Rot
           weight: mainLineWeight * (layerInfo.isSelected ? 1.7 : 1)
         },
         onEachFeature: (feature, layer) => {
+          console.log('Verarbeite Feature:', feature);
+          console.log('Layer vor Event-Registrierung:', layer);
           // Popup hinzufügen, wenn Feature einen Namen hat
           if (feature.properties && feature.properties.name) {
             layer.bindPopup(feature.properties.name);
           }
+
+          // Debugging: Layer-Informationen ausgeben
+          console.log('Erstellter Layer:', layer);
+          console.log('Layer-Bounds:', layer.getBounds());
+          
+          // Stile für Hover-Effekte
+          const isSelected = layerInfo.isSelected;
+          layer.setStyle({
+            weight: mainLineWeight * (isSelected ? 1.8 : 1),
+            opacity: isSelected ? 0.8 : 0.6
+          });
+          
+          if (layerInfo.shadowLayer) {
+            layerInfo.shadowLayer.setStyle({
+              weight: shadowLineWeight * (isSelected ? 1.8 : 1),
+              opacity: isSelected ? 0.8 : 0.6
+            });
+          }
+
+          // Zusätzliche Event-Listener für Debugging
+          layer.on('click', function(e) {
+            console.log('Klick auf Layer:', e);
+          });
+          
+          layer.on('add', function(e) {
+            console.log('Layer zur Karte hinzugefügt:', e);
+          });
         },
         pointToLayer: () => null // Punktfeatures überspringen
       }).addTo(map);
