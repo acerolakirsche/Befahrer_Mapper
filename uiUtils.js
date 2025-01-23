@@ -21,6 +21,25 @@
 // gemeinsam bearbeiten können (z.B. Farbe ändern, ausblenden)
 let selectedKMLs = [];
 
+// Basis-Liniendicke für Schattenlayer (in Pixeln)
+// Wird für Hover- und Auswahl-Effekte verwendet
+const shadowLineWeight = 4;
+
+/**
+ * Extrahiert eine Nummer aus einem KML-Dateinamen
+ * 
+ * @param {string} filename - Der Dateiname der KML-Datei
+ * @returns {string} - Extrahierten Nummer oder '000' falls keine gefunden
+ * 
+ * Verarbeitet Dateinamen im Format "Befahrung_123.kml" oder ähnlich
+ * Extrahiert die erste gefundene Zahlenfolge aus dem Dateinamen
+ */
+function extractNumberFromFilename(filename) {
+  const match = filename.match(/\d+/);
+  return match ? match[0] : '000';
+}
+
+
 /**
  * Erstellt einen neuen Listeneintrag für eine KML-Datei
  * 

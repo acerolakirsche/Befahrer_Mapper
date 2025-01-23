@@ -1,3 +1,5 @@
+import { MapEvents } from './eventHandler.js';
+
 /**
  * kmlProcessor.js
  * ==============
@@ -35,7 +37,7 @@ const shadowLineWeight = mainLineWeight * 2;  // Stärke der Schatten-Linie
  * 2. Erkennt Duplikate
  * 3. Verarbeitet gültige, neue KML-Dateien
  */
-function processKMLFiles(files, map, kmlItems, layers) {
+function processKMLFiles(files, map, kmlItems, layers, currentProject) {
   const ignoredFiles = []; // Ignorierte Dateien (Duplikate)
   const addedFiles = []; // Erfolgreich hinzugefügte Dateien
 
@@ -56,7 +58,7 @@ function processKMLFiles(files, map, kmlItems, layers) {
         ignoredFiles.push(file.name);
       } else {
         // Gültige, nicht-doppelte KML-Datei verarbeiten
-        processKMLFile(file, map, kmlItems, layers);
+        processKMLFile(file, map, kmlItems, layers, currentProject);
         addedFiles.push(file.name);
       }
     } else {
@@ -85,6 +87,7 @@ function processKMLFiles(files, map, kmlItems, layers) {
  * @param {L.Map} map - Leaflet-Karteninstanz
  * @param {HTMLElement} kmlItems - Container für KML-Listeneinträge
  * @param {Array} layers - Array zur Speicherung der Layer-Informationen
+ * @param {string} currentProject - Name des aktuellen Projekts
  * 
  * Ablauf:
  * 1. Liest die KML-Datei ein
@@ -93,7 +96,7 @@ function processKMLFiles(files, map, kmlItems, layers) {
  * 4. Fügt Layer zur Karte hinzu
  * 5. Erstellt Listeneintrag
  */
-function processKMLFile(file, map, kmlItems, layers) {
+function processKMLFile(file, map, kmlItems, layers, currentProject) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     
@@ -163,14 +166,8 @@ function processKMLFile(file, map, kmlItems, layers) {
             });
           }
 
-          // Zusätzliche Event-Listener für Debugging
-          layer.on('click', function(e) {
-            console.log('Klick auf Layer:', e);
-          });
-          
-          layer.on('add', function(e) {
-            console.log('Layer zur Karte hinzugefügt:', e);
-          });
+          // Event-Listener über eventHandler.js registrieren
+          MapEvents.registerLayerEvents(layer);
         },
         pointToLayer: () => null // Punktfeatures überspringen
       }).addTo(map);
@@ -284,3 +281,5 @@ function validateFilename(filename) {
     return false;
   }
 }
+
+export { processKMLFile, processKMLFiles };

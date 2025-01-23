@@ -18,6 +18,15 @@
  * - Verwaltet globale Zustände für Layer und Projekte
  */
 
+// Globale Variablen
+const layers = []; // Speichert Informationen über alle KML-Layer
+const kmlItems = document.getElementById('kml-items'); // Container für KML-Listeneinträge
+let currentProject = null; // Aktuell ausgewähltes Projekt
+
+// Importiere Event-Handler
+import { MapEvents, FileEvents, UIEvents } from './eventHandler.js';
+import { processKMLFile, processKMLFiles } from './kmlProcessor.js';
+
 // Karte initialisieren mit Fokus auf Deutschland
 const map = L.map('map').setView([51.1657, 10.4515], 6);
 
@@ -26,71 +35,37 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-// Event-Listener für Mouse-Hover über KML-Layer
-map.on('layeradd', function(e) {
-  if (e.layer && e.layer.feature && e.layer.feature.id) {
-    e.layer.on('mouseover', function() {
-      console.log('Feature ID:', e.layer.feature.id);
-    });
-  }
-});
+// Initialisiere Map Events
+MapEvents.init(map);
 
-// Drag & Drop Bereich für die Karte einrichten
+// Initialisiere File Events
 const dropArea = document.getElementById('map');
-
-// Drag-Over Event behandeln
-dropArea.addEventListener('dragover', (e) => {
-  e.preventDefault();
-  dropArea.style.backgroundColor = '#f0f0f0'; // Visuelles Feedback
+FileEvents.init(dropArea, (files) => processKMLFiles(files, map, kmlItems, layers, currentProject), {
+  map,
+  kmlItems,
+  layers
 });
 
-// Drag-Leave Event behandeln
-dropArea.addEventListener('dragleave', () => {
-  dropArea.style.backgroundColor = ''; // Hintergrund zurücksetzen
-});
-
-// Drop Event behandeln
-dropArea.addEventListener('drop', (e) => {
-  e.preventDefault();
-  dropArea.style.backgroundColor = ''; // Hintergrund zurücksetzen
-
-  // Abgelegte Dateien verarbeiten
-  const files = e.dataTransfer.files;
-
-  // KML-Dateien verarbeiten und Ergebnisse sammeln
-  const { ignoredFiles, addedFiles, invalidMessageElement } = processKMLFiles(files, map, kmlItems, layers);
-
-  // Meldungen für ignorierte und hinzugefügte Dateien anzeigen
-  let versatz = invalidMessageElement ? invalidMessageElement.offsetHeight + 20 : 0;
-  
-  if (ignoredFiles.length > 0) {
-    const duplikatNachricht = ignoredFiles.map(datei =>
-      NACHRICHTEN.WARNUNG.DUPLIKAT(datei)
-    ).join('\n');
-    const warnungElement = showTempMessage(duplikatNachricht, '#ffa500', 5000, versatz);
-    versatz += warnungElement.offsetHeight + 20;
-  }
-
-  if (addedFiles.length > 0) {
-    const erfolgNachricht = addedFiles.map(datei =>
-      NACHRICHTEN.ERFOLG.KML_HINZUGEFUEGT(datei)
-    ).join('\n');
-    setTimeout(() => {
-      showTempMessage(erfolgNachricht, '#4CAF50', 5000, versatz);
-    }, 100);
-  }
-});
-
-// Globale Variablen für KML-Layer und Listenelemente
-const layers = []; // Speichert Informationen über alle KML-Layer
-const kmlItems = document.getElementById('kml-items'); // Container für KML-Listeneinträge
 const projectSelector = document.getElementById('project-selector');
 const selectedProjectDisplay = document.getElementById('selected-project-display');
+const newProjectForm = document.getElementById('new-project-form'); // Formular für neue Projekte
+
 // Initiale Anzeige beim Laden der Seite
 document.getElementById('username-display').textContent = 'Benutzer: allgemein';
 document.getElementById('projectname-display').textContent = 'Befahrungsprojekt: leer';
-const newProjectForm = document.getElementById('new-project-form'); // Formular für neue Projekte
-let currentProject = null; // Aktuell ausgewähltes Projekt
+
+// Initialisiere UI Events
+UIEvents.init({
+  userSelector: document.getElementById('user-selector'),
+  projectSelector: projectSelector,
+  createProjectBtn: document.getElementById('create-project-btn')
+}, {
+  currentProject,
+  loadProjectKMLs,
+  applyUserSettings,
+  showTempMessage,
+  isValidProjectName
+});
 
 /**
  * Lädt KML-Dateien aus dem ausgewählten Projektordner
@@ -129,7 +104,7 @@ async function loadProjectKMLs(projektName) {
     // Jede KML-Datei verarbeiten
     for (const fileName of kmlFiles) {
       const file = { name: fileName };
-      const layerInfo = processKMLFile(file, map, kmlItems, layers);
+      const layerInfo = processKMLFile(file, map, kmlItems, layers, currentProject);
       
       // Event-Listener für ShadowLayer hinzufügen
       if (layerInfo && layerInfo.shadowLayer) {
@@ -193,8 +168,6 @@ async function loadUserDirectories() {
     const generalUser = users.find(u => u === 'allgemein');
     if (generalUser) {
       userSelector.value = generalUser;
-      // Event auslösen, um Benutzerdaten zu laden
-      userSelector.dispatchEvent(new Event('change'));
     }
   } catch (error) {
     console.error('Fehler beim Laden der Benutzer:', error);
@@ -205,29 +178,6 @@ async function loadUserDirectories() {
 // Benutzerverzeichnisse laden
 loadUserDirectories();
 
-// Event-Listener für Benutzerauswahl
-userSelector.addEventListener('change', function() {
-  const selectedUser = this.value;
-  if (selectedUser) {
-    // Anzeige sofort aktualisieren
-    document.getElementById('username-display').textContent = `Benutzer: ${selectedUser}`;
-    document.getElementById('projectname-display').textContent = `Befahrungsprojekt: ${currentProject || 'leer'}`;
-    
-    // Benutzerdaten vom Server laden
-    fetch(`User/${selectedUser}/user_${selectedUser}.json`)
-      .then(response => response.json())
-      .then(userData => {
-        // Benutzerspezifische Einstellungen anwenden
-        if (userData.settings) {
-          applyUserSettings(userData.settings);
-        }
-      })
-      .catch(error => {
-        console.error('Fehler beim Laden der Benutzerdaten:', error);
-        showTempMessage(NACHRICHTEN.FEHLER.BENUTZERDATEN_LADEN, '#ff4444');
-      });
-  }
-});
 
 /**
  * Wendet benutzerspezifische Einstellungen an
@@ -273,50 +223,6 @@ fetch('getProjects.php')
     showTempMessage(NACHRICHTEN.FEHLER.NETZWERK_FEHLER, '#ff4444');
   });
 
-// Event-Listener für die Projektauswahl
-projectSelector.addEventListener('change', async function() {
-  const selectedProject = this.value;
-  const newProjectForm = document.getElementById('new-project-form');
-  const currentUser = userSelector.value;
-  
-  if (selectedProject === 'neues Projekt') {
-    newProjectForm.style.display = 'flex';
-  } else if (selectedProject) {
-    newProjectForm.style.display = 'none';
-    
-    // Projektstatus in Benutzer-JSON speichern
-    try {
-      const userFilePath = `User/${currentUser}/user_${currentUser}.json`;
-      
-      // Aktuelle Benutzerdaten laden
-      const response = await fetch(userFilePath);
-      const userData = await response.json();
-      
-      // Projektstatus aktualisieren
-      userData.settings = userData.settings || {};
-      userData.settings.lastProject = selectedProject;
-      
-      // Aktualisierte Daten speichern
-      await fetch('saveUserSettings.php', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: `user=${encodeURIComponent(currentUser)}&data=${encodeURIComponent(JSON.stringify(userData))}`
-      });
-      
-      // Debug-Ausgabe in Konsole
-      console.log(`Projektstatus gespeichert: ${selectedProject} für Benutzer ${currentUser}`);
-    } catch (error) {
-      console.error('Fehler beim Speichern des Projektstatus:', error);
-    }
-    
-    // Projekt laden
-    loadProjectKMLs(selectedProject);
-  } else {
-    newProjectForm.style.display = 'none';
-  }
-});
 
 // Funktion zur Validierung des Projektnamens
 function sanitizeProjectName(projectName) {
@@ -371,59 +277,3 @@ function isValidProjectName(projectName) {
     sanitizedName: sanitizedName
   };
 }
-
-// Event-Listener für den "Erstellen"-Button
-const createProjectBtn = document.getElementById('create-project-btn');
-createProjectBtn.addEventListener('click', function() {
-  const newProjectNameInput = document.getElementById('new-project-name');
-  const newProjectName = newProjectNameInput.value.trim();
-  
-  if (!newProjectName) {
-    showTempMessage('Bitte geben Sie einen Projektnamen ein.', '#ff4444');
-    return;
-  }
-  
-  // Projektnamen bereinigen und validieren
-  const { isValid, sanitizedName } = isValidProjectName(newProjectName);
-  
-  if (!isValid) {
-    showTempMessage(
-      `Der Projektname wurde automatisch angepasst zu: ${sanitizedName}`,
-      '#4CAF50'
-    );
-  }
-  
-  // Neues Projekt über API erstellen
-  fetch('getProjects.php', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: `action=create&projectName=${encodeURIComponent(sanitizedName)}`
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.status === 'success') {
-      showTempMessage(`Projekt "${newProjectName}" erfolgreich erstellt`, '#4CAF50');
-      
-      // Dropdown aktualisieren mit bereinigtem Namen
-      const option = document.createElement('option');
-      option.value = sanitizedName;
-      option.textContent = sanitizedName;
-      projectSelector.appendChild(option);
-      
-      // Neues Projekt direkt auswählen
-      projectSelector.value = sanitizedName;
-      loadProjectKMLs(sanitizedName);
-    } else {
-      showTempMessage(`Fehler: ${data.message}`, '#ff4444');
-    }
-  })
-  .catch(error => {
-    console.error('Fehler beim Erstellen des Projekts:', error);
-    showTempMessage('Fehler beim Erstellen des Projekts', '#ff4444');
-  });
-  
-  newProjectForm.style.display = 'none';
-  newProjectNameInput.value = ''; // Eingabefeld leeren
-});
