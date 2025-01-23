@@ -23,8 +23,12 @@ Der Befahrer Mapper ist eine webbasierte Anwendung zur effizienten Planung und K
 - **main.js**: 
   - Zentrale Steuerung der Anwendung
   - Initialisierung der Karte
-  - Verwaltung aller Maus-Events (Klick, Hover, Drag & Drop)
   - Koordination zwischen UI und Kartenlayer
+
+- **eventHandler.js**:
+  - Zentrale Verwaltung aller Maus-Events (Klick, Hover, Drag & Drop)
+  - Event-Listener für Benutzerinteraktionen
+  - Delegation an spezialisierte Handler
 
 - **kmlProcessor.js**:
   - Verarbeitung von KML-Dateien
@@ -60,7 +64,7 @@ Der Befahrer Mapper ist eine webbasierte Anwendung zur effizienten Planung und K
 ## Architekturprinzipien
 
 ### Maus-Event-Handling
-Alle Maus-Events werden zentral in **main.js** verwaltet, um eine konsistente Verarbeitung sicherzustellen:
+Alle Maus-Events werden zentral in **eventHandler.js** verwaltet, um eine konsistente Verarbeitung sicherzustellen:
 
 1. **Klick-Events**:
    - Einzel- und Mehrfachselektion von KML-Layern
@@ -84,7 +88,7 @@ Alle Maus-Events werden zentral in **main.js** verwaltet, um eine konsistente Ve
 ## Entwicklungsrichtlinien
 
 1. **Maus-Events**:
-   - Alle Maus-Interaktionen müssen in main.js implementiert werden
+   - Alle Maus-Interaktionen müssen in eventHandler.js implementiert werden
    - Keine direkte Event-Handling-Logik in kmlProcessor.js
    - Konsistente Verarbeitung über zentrale Event-Handler
 
