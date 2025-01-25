@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <!--
+      index.html
+      ==========
+      Hauptseite des Befahrer Mappers
+      
+      Diese HTML-Datei ist der zentrale Einstiegspunkt der Anwendung.
+      Sie definiert die grundlegende Struktur und lädt alle notwendigen
+      Ressourcen.
+
+      Hauptkomponenten:
+      - Kartencontainer für die OpenStreetMap-Darstellung
+      - Seitenleiste für KML-Verwaltung und Projektauswahl
+      - Farbwähler für KML-Styling
+      - Einbindung aller Skripte und Stylesheets
+
+      Technische Details:
+      - Verwendet Leaflet.js für Kartenfunktionen
+      - Font Awesome für Icons
+      - Eigene CSS- und JavaScript-Dateien für Anwendungslogik
+    -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Befahrer Mapper</title>
+
+    <!-- Externe CSS-Bibliotheken -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <!-- Eigenes Stylesheet -->
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- Hauptcontainer für die Karte -->
+    <div id="map"></div>
+
+    <!-- Anzeige von Benutzer und Projekt -->
+    <div id="selected-project-display">
+  <span id="username-display"></span>
+  <span id="projectname-display"></span>
+</div>
+
+    <!-- Seitenleiste für KML-Verwaltung -->
+    <div id="kml-list">
+      <h3>KML Verwaltung</h3>
+
+      <!-- Benutzerauswahl-Dropdown -->
+      <div class="user-selection">
+        <label class="dropdown-label">Benutzerwahl</label>
+        <select id="user-selector">
+          <option value="">Benutzer wählen</option>
+        </select>
+      </div>
+
+      <!-- Projektauswahl-Dropdown -->
+      <label class="dropdown-label">Projektwahl</label>
+      <select id="project-selector">
+        <option value="">Projekt auswählen</option>
+        <option value="neues Projekt" class="new-project-option">➕ neues Projekt erstellen</option>
+      </select>
+      
+      <div id="new-project-form" style="display: none;">
+        <input type="text" id="new-project-name" placeholder="Neuer Projektname">
+        <button id="create-project-btn">Erstellen</button>
+      </div>
+
+      <!-- Container für KML-Listeneinträge 
+           Hier werden alle geladenen KML-Dateien angezeigt
+           Unterstützt Drag & Drop, Mehrfachauswahl und Kontextmenü -->
+      <div id="kml-items"></div>
+    </div>
+
+    <!-- Externe JavaScript-Bibliotheken -->
+    <!-- Leaflet.js für interaktive Kartenfunktionen -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- toGeoJSON für KML-Konvertierung -->
+    <script src="https://unpkg.com/@mapbox/togeojson@0.16.0/togeojson.js"></script>
+
+    <!-- Anwendungsskripte -->
+    <!-- Die Reihenfolge der Skripte ist wichtig für die Abhängigkeiten -->
+    <script src="kmlProcessor.js" type="module"></script>  <!-- KML-Verarbeitung -->
+    <script src="uiUtils.js"></script>       <!-- UI-Funktionen -->
+    <script src="messageUtils.js"></script>  <!-- Nachrichtensystem -->
+    <script src="contextMenu.js"></script>   <!-- Kontextmenü -->
+    <script src="eventHandler.js" type="module"></script> <!-- Event Handler -->
+    <script src="main.js" type="module"></script>          <!-- Hauptanwendung -->
+  </body>
+</html>

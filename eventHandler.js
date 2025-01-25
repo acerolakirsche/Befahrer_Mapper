@@ -14,17 +14,9 @@ export class MapEvents {
    */
   static init(map) {
     // Event-Listener für Karteninteraktionen
-    map.on('click', (e) => {
-      console.log('Kartenklick:', e.latlng);
-    });
-
-    map.on('zoomend', () => {
-      console.log('Neuer Zoomlevel:', map.getZoom());
-    });
-
-    map.on('moveend', () => {
-      console.log('Kartenzentrum:', map.getCenter());
-    });
+    map.on('click', (e) => {});
+    map.on('zoomend', () => {});
+    map.on('moveend', () => {});
   }
 
   /**
@@ -32,13 +24,8 @@ export class MapEvents {
    * @param {L.Layer} layer - Der Layer, für den Events registriert werden sollen
    */
   static registerLayerEvents(layer) {
-    layer.on('click', function(e) {
-      console.log('Klick auf Layer:', e);
-    });
-    
-    layer.on('add', function(e) {
-      console.log('Layer zur Karte hinzugefügt:', e);
-    });
+    layer.on('click', function(e) {});
+    layer.on('add', function(e) {});
   }
 }
 
