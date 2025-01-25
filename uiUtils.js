@@ -300,24 +300,6 @@ function updateSelectedKMLs() {
   });
 }
 
-// Initialize color picker functionality
-document.addEventListener('DOMContentLoaded', () => {
-  const colorBoxes = document.querySelectorAll('.color-box');
-  colorBoxes.forEach(colorBox => {
-    colorBox.addEventListener('click', () => {
-      const selectedColor = colorBox.getAttribute('data-color');
-      selectedKMLs.forEach(layerInfo => {
-        layerInfo.mainLayer.setStyle({ color: selectedColor });
-        layerInfo.color = selectedColor;
-        const kmlItem = document.querySelector(`[data-name="${layerInfo.name}"]`);
-        if (kmlItem) {
-          kmlItem.querySelector('.color-stripe').style.backgroundColor = selectedColor;
-        }
-      });
-    });
-  });
-});
-
 /**
  * Erstellt ein Kontextmenü für KML-Einträge
  * 
